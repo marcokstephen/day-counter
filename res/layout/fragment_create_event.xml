@@ -1,0 +1,76 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.sm.daysuntilcards.CreateEvent$PlaceholderFragment" >
+
+    <EditText
+        android:id="@+id/eventText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:ems="10"
+        android:hint="@string/event_name" >
+        
+    </EditText>
+
+    <Button
+        android:id="@+id/timeButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/dateButton"
+        android:layout_below="@+id/dateButton"
+        android:text="@string/change_time" />
+
+    <Button
+        android:id="@+id/dateButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/eventText"
+        android:layout_below="@+id/eventText"
+        android:text="@string/change_date" />
+
+    <CheckBox
+        android:id="@+id/weekBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/timeButton"
+        android:layout_below="@+id/timeButton"
+        android:text="@string/exclude_weekends" />
+
+    <TextView
+        android:id="@+id/timeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/timeButton"
+        android:layout_alignBottom="@+id/timeButton"
+        android:layout_toRightOf="@+id/timeButton"
+        android:text="@string/temp"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/dateView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/dateButton"
+        android:layout_alignBottom="@+id/dateButton"
+        android:layout_toRightOf="@+id/dateButton"
+        android:text="@string/temp"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/createButton"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/weekBox"
+        android:layout_centerHorizontal="true"
+        android:text="@string/create_event" />
+
+</RelativeLayout>
