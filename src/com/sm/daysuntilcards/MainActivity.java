@@ -26,13 +26,9 @@ import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
 
 public class MainActivity extends Activity implements ActionBar.TabListener {
 	SectionsPagerAdapter mSectionsPagerAdapter;
@@ -179,8 +175,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	@Override
 	public void onTabSelected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
-		// When the given tab is selected, switch to the corresponding page in
-		// the ViewPager.
 		mViewPager.setCurrentItem(tab.getPosition());
 	}
 
@@ -194,10 +188,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			FragmentTransaction fragmentTransaction) {
 	}
 	
-	/**
-	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-	 * one of the sections/tabs/pages.
-	 */
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 		public SectionsPagerAdapter(FragmentManager fm) {
@@ -206,7 +196,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
 		@Override
 		public Fragment getItem(int position) {
-			return CardFragment.newInstance(position + 1);
+			if (position == 0){
+				return new UntilFragment();
+			} else {
+				return new SinceFragment();
+			}
 		}
 
 		@Override
@@ -227,47 +221,26 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		}
 	}
 
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class CardFragment extends Fragment {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		private static final String ARG_SECTION_NUMBER = "section_number";
-
-		/**
-		 * Returns a new instance of this fragment for the given section number.
-		 */
-		public static CardFragment newInstance(int sectionNumber) {
-			CardFragment fragment = new CardFragment();
-			Bundle args = new Bundle();
-			if (sectionNumber == 1){
-				args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-			} else {
-				args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-			}
-			fragment.setArguments(args);
-			return fragment;
+	public static class UntilFragment extends ListFragment {
+		public UntilFragment() {
 		}
-
-		public CardFragment() {
-		}
-
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_until, container,
-					false);
-			ListView cardListView = (ListView)getActivity(). findViewById(R.id.cardListView);
+		public void onActivityCreated(Bundle savedInstanceState){
+			super.onActivityCreated(savedInstanceState);
 			CardListAdapter cla = new CardListAdapter(getActivity(), daysUntil);
-			cardListView.setAdapter(cla);
-			/*TextView textView = (TextView) rootView
-					.findViewById(R.id.section_label);
-			textView.setText(Integer.toString(getArguments().getInt(
-					ARG_SECTION_NUMBER)));*/
-			return rootView;
+			setListAdapter(cla);
+		}
+	}
+	
+	public static class SinceFragment extends ListFragment {
+		public SinceFragment() {
+		}
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState){
+			super.onActivityCreated(savedInstanceState);
+			String[] items = {"Chris","is","retarded"};
+			CardListAdapter cla = new CardListAdapter(getActivity(), daysSince);
+			setListAdapter(cla);
 		}
 	}
 }
