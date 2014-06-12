@@ -24,6 +24,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 public class CreateEvent extends Activity {
+	static int day = 1;
+	static int month = 2;
+	static int year = 3;
+	static int hour = 0;
+	static int minute = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +36,17 @@ public class CreateEvent extends Activity {
 		setContentView(R.layout.fragment_create_event);
 		
 		final Calendar c = Calendar.getInstance();
-		int hour = c.get(Calendar.HOUR_OF_DAY);
-		int minute = c.get(Calendar.MINUTE);
+		hour = c.get(Calendar.HOUR_OF_DAY);
+		minute = c.get(Calendar.MINUTE);
+		year = c.get(Calendar.YEAR);
+		month = c.get(Calendar.MONTH);
+		day = c.get(Calendar.DAY_OF_MONTH);
 
 		final EditText eventText = (EditText) findViewById(R.id.eventText);
 		final TextView timeView = (TextView) findViewById(R.id.timeView);
 		timeView.setText(String.format("%02d",hour)+":"+String.format("%02d",minute));
 		final TextView dateView = (TextView) findViewById(R.id.dateView);
-		dateView.setText("1/2/3");
+		dateView.setText(day+"/"+month+"/"+year);
 		
 		Button timeButton = (Button) findViewById(R.id.timeButton);
 		timeButton.setOnClickListener(new View.OnClickListener() {
@@ -63,8 +71,11 @@ public class CreateEvent extends Activity {
 				try{
 					String filename = eventText.getText().toString();
 					obj.put("name", eventText.getText());
-					obj.put("date", dateView.getText());
-					obj.put("time", timeView.getText());
+					obj.put("day", day);
+					obj.put("month", month);
+					obj.put("year", year);
+					obj.put("hour", hour);
+					obj.put("minute", minute);
 					obj.put("weekends", weekbool);
 					String stringDate = obj.toString();
 					FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
@@ -93,15 +104,18 @@ public class CreateEvent extends Activity {
 		@Override
 		public Dialog onCreateDialog (Bundle savedInstanceState) {
 			final Calendar c = Calendar.getInstance();
-			int hour = c.get(Calendar.HOUR_OF_DAY);
-			int minute = c.get(Calendar.MINUTE);
+			hour = c.get(Calendar.HOUR_OF_DAY);
+			minute = c.get(Calendar.MINUTE);
 			return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
 		}
 
 		@Override
-		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+		public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfDay) { //we do not use these parameters
+			//we use the static ints declared at the top of the class
+			hour = hourOfDay;
+			minute = minuteOfDay;
 			TextView timeText = (TextView)getActivity(). findViewById(R.id.timeView);
-			timeText.setText(String.format("%02d",hourOfDay)+":"+String.format("%02d",minute));
+			timeText.setText(String.format("%02d",hour)+":"+String.format("%02d",minute));
 		}
 	}
 	public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
@@ -110,15 +124,15 @@ public class CreateEvent extends Activity {
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			// Use the current date as the default date in the picker
 			final Calendar c = Calendar.getInstance();
-			int year = c.get(Calendar.YEAR);
-			int month = c.get(Calendar.MONTH);
-			int day = c.get(Calendar.DAY_OF_MONTH);
-				
+
 			// Create a new instance of DatePickerDialog and return it
 			return new DatePickerDialog(getActivity(), this, year, month, day);
 		}
 		
-		public void onDateSet(DatePicker view, int year, int month, int day) {
+		public void onDateSet(DatePicker view, int yearSet, int monthSet, int daySet) {
+			year = yearSet;
+			month = monthSet;
+			day = daySet;
 			TextView dateView = (TextView)getActivity(). findViewById(R.id.dateView);
 			dateView.setText(day+"/"+month+"/"+year);
 		}

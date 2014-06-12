@@ -3,16 +3,27 @@ package com.sm.daysuntilcards;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-import android.app.Activity;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ListFragment;
 import android.content.Intent;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
+import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,27 +31,54 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements ActionBar.TabListener {
-
-	/**
-	 * The {@link android.support.v4.view.PagerAdapter} that will provide
-	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
-	 * derivative, which will keep every loaded fragment in memory. If this
-	 * becomes too memory intensive, it may be best to switch to a
-	 * {@link android.support.v13.app.FragmentStatePagerAdapter}.
-	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
-
-	/**
-	 * The {@link ViewPager} that will host the section contents.
-	 */
 	ViewPager mViewPager;
-
+	static List<JSONObject> daysUntil;
+	static List<JSONObject> daysSince;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		final Calendar c = Calendar.getInstance();
+		daysUntil = new ArrayList<JSONObject>();
+		daysSince = new ArrayList<JSONObject>();
+		
+		FileInputStream fis;
+		try {
+			String[] file = fileList();
+			for (int i = 0; i < file.length; i++){
+				String listFile = file[i];
+				String value = "";
+				fis = openFileInput(listFile);
+				byte[] input = new byte[fis.available()];
+				while(fis.read(input) != -1){
+					value += new String(input);
+				}
+				fis.close();
+				try {
+					Log.d("OUTPUT",value);
+					JSONObject dateJsonObj = new JSONObject(value);
+					boolean isAfterCurrentDate = checkIfAfterCurrentDate(dateJsonObj, c);
+					if (isAfterCurrentDate){
+						daysUntil.add(dateJsonObj);
+					} else {
+						daysSince.add(dateJsonObj);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		setContentView(R.layout.activity_main);
 
 		// Set up the action bar.
@@ -76,27 +114,49 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+	}
+	
+	@SuppressLint("SimpleDateFormat")
+	public boolean checkIfAfterCurrentDate(JSONObject event, Calendar c){
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH);
+		int day = c.get(Calendar.DAY_OF_MONTH);
+		int hour = c.get(Calendar.HOUR_OF_DAY);
+		int minute = c.get(Calendar.MINUTE);
+		int eventYear=0,eventMonth=0,eventDay=0,eventHour=0,eventMinute=0;
 		
-		FileInputStream fis;
 		try {
-			String[] file = fileList();
-			for (int i = 0; i < file.length; i++){
-				String listFile = file[i];
-				String value = "";
-				fis = openFileInput(listFile);
-				byte[] input = new byte[fis.available()];
-				while(fis.read(input) != -1){
-					value += new String(input);
-				}
-				fis.close();
-				Log.d("OUTPUT",value);
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+			eventYear = event.getInt("year");
+			eventMonth = event.getInt("month");
+			eventDay = event.getInt("day");
+			eventHour = event.getInt("hour");
+			eventMinute = event.getInt("minute");
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		Log.d("OUTPUT","A");
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date currentDate, eventDate;
+		try {
+			currentDate = sdf.parse(year+"-"+month+"-"+day);
+			eventDate = sdf.parse(eventYear+"-"+eventMonth+"-"+eventDay);
+			
+			if (eventDate.after(currentDate)){
+				return true;
+			} else if (eventDate.before(currentDate)){
+				return false;
+			} else if (hour > eventHour) {
+				return true;
+			} else if (hour < eventHour){
+				return false;
+			} else if (eventMinute > minute){
+				return true;
+			} else return false;
+			
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	@Override
@@ -200,10 +260,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_until, container,
 					false);
-			TextView textView = (TextView) rootView
+			ListView cardListView = (ListView)getActivity(). findViewById(R.id.cardListView);
+			CardListAdapter cla = new CardListAdapter(getActivity(), daysUntil);
+			cardListView.setAdapter(cla);
+			/*TextView textView = (TextView) rootView
 					.findViewById(R.id.section_label);
 			textView.setText(Integer.toString(getArguments().getInt(
-					ARG_SECTION_NUMBER)));
+					ARG_SECTION_NUMBER)));*/
 			return rootView;
 		}
 	}
