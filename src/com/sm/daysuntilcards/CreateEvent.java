@@ -123,8 +123,6 @@ public class CreateEvent extends Activity {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			// Use the current date as the default date in the picker
-			final Calendar c = Calendar.getInstance();
-
 			// Create a new instance of DatePickerDialog and return it
 			return new DatePickerDialog(getActivity(), this, year, month, day);
 		}

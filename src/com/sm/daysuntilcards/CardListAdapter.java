@@ -52,7 +52,6 @@ public class CardListAdapter extends BaseAdapter{
 			minute = event.getInt("minute");
 			title = event.getString("name");
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

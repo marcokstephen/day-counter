@@ -1,3 +1,9 @@
+/*Things to do:
+ * Fix layout of card
+ * Refresh list automatically
+ * 
+ */
+
 package com.sm.daysuntilcards;
 
 import java.io.FileInputStream;
