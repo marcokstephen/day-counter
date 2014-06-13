@@ -31,6 +31,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcards.MainActivity" />
         </activity>
+        <activity
+            android:name="com.sm.daysuntilcards.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
+        <activity
+            android:name="com.sm.daysuntilcards.HelpMenu"
+            android:label="@string/title_activity_help_menu"
+            android:parentActivityName="com.sm.daysuntilcards.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sm.daysuntilcards.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

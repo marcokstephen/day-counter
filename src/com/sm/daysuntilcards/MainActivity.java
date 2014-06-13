@@ -181,11 +181,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			e.printStackTrace();
 		}
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		Date currentDate, eventDate;
 		try {
-			currentDate = sdf.parse(year+"-"+month+"-"+day);
-			eventDate = sdf.parse(eventYear+"-"+eventMonth+"-"+eventDay);
+			currentDate = sdf.parse(year+"-"+month+"-"+day+" "+hour+":"+minute);
+			eventDate = sdf.parse(eventYear+"-"+eventMonth+"-"+eventDay+" "+eventHour+":"+eventMinute);
 			
 			if (eventDate.after(currentDate)){
 				return true;
@@ -214,12 +214,16 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
-			return true;
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
 		} else if (id == R.id.create_date) {
 			Intent intent = new Intent(this, CreateEvent.class);
 			startActivity(intent);
 		} else if (id == R.id.clear_all){
 			promptToDeleteAll();
+		} else if (id == R.id.help){
+			Intent intent = new Intent(this, HelpMenu.class);
+			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -229,12 +233,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			FragmentTransaction fragmentTransaction) {
 		mViewPager.setCurrentItem(tab.getPosition());
 	}
-
 	@Override
 	public void onTabUnselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
 	}
-
 	@Override
 	public void onTabReselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {

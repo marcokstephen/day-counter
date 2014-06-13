@@ -15,5 +15,8 @@
     <string name="event_name">Event name</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-	<string name="delete_all">Delete All</string>
+    <string name="delete_all">Delete All</string>
+    <string name="help">Help</string>
+    <string name="title_activity_help_menu">Help</string>
+
 </resources>

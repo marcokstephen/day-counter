@@ -2,11 +2,14 @@ package com.sm.daysuntilcards;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.Format;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
+import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -23,12 +26,21 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+/*
+ * NOTE: Java months are off by 1 (start at 0). As such, they must be formatted as month+1, but not
+ * calculated this way
+ */
+
+@SuppressLint("SimpleDateFormat")
 public class CreateEvent extends Activity {
 	static int day = 1;
 	static int month = 2;
 	static int year = 3;
 	static int hour = 0;
 	static int minute = 0;
+	static SimpleDateFormat fromDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	static SimpleDateFormat toDateFormat = new SimpleDateFormat("MMM d, yyyy");
+	static Date eventDate = new Date();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +58,15 @@ public class CreateEvent extends Activity {
 		final TextView timeView = (TextView) findViewById(R.id.timeView);
 		timeView.setText(String.format("%02d",hour)+":"+String.format("%02d",minute));
 		final TextView dateView = (TextView) findViewById(R.id.dateView);
-		dateView.setText(day+"/"+month+"/"+year);
+		String dateString = day+"/"+(month+1)+"/"+year;
+		String outputDateString = "";
+		try {
+			eventDate = fromDateFormat.parse(dateString);
+			outputDateString = toDateFormat.format(eventDate);
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+		dateView.setText(outputDateString);
 		
 		Button timeButton = (Button) findViewById(R.id.timeButton);
 		timeButton.setOnClickListener(new View.OnClickListener() {
@@ -122,8 +142,6 @@ public class CreateEvent extends Activity {
 		
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			// Use the current date as the default date in the picker
-			// Create a new instance of DatePickerDialog and return it
 			return new DatePickerDialog(getActivity(), this, year, month, day);
 		}
 		
@@ -132,7 +150,15 @@ public class CreateEvent extends Activity {
 			month = monthSet;
 			day = daySet;
 			TextView dateView = (TextView)getActivity(). findViewById(R.id.dateView);
-			dateView.setText(day+"/"+month+"/"+year);
+			String dateString = day+"/"+(month+1)+"/"+year;
+			String outputDateString = "";
+			try {
+				eventDate = fromDateFormat.parse(dateString);
+				outputDateString = toDateFormat.format(eventDate);
+			} catch (ParseException e1) {
+				e1.printStackTrace();
+			}
+			dateView.setText(outputDateString);
 		}
 	}
 }
