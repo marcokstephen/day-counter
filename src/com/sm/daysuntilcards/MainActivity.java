@@ -13,6 +13,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -23,17 +25,23 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 
 public class MainActivity extends Activity implements ActionBar.TabListener {
@@ -41,6 +49,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	ViewPager mViewPager;
 	static List<JSONObject> daysUntil;
 	static List<JSONObject> daysSince;
+	static CardListAdapter cla;
+	static CardListAdapter cla2;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +91,23 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			e.printStackTrace();
 		}
 		
+		Collections.sort(daysUntil, new Comparator<JSONObject>() {
+			public int compare(JSONObject event1, JSONObject event2){
+				long event1ms = eventToMs(event1);
+				long event2ms = eventToMs(event2);
+				if (event1ms < event2ms) return -1;
+				return 1;
+			}
+		});
+		Collections.sort(daysSince, new Comparator<JSONObject>() {
+			public int compare(JSONObject event1, JSONObject event2){
+				long event1ms = eventToMs(event1);
+				long event2ms = eventToMs(event2);
+				if (event1ms > event2ms) return -1;
+				return 1;
+			}
+		});
+		
 		setContentView(R.layout.activity_main);
 
 		// Set up the action bar.
@@ -116,6 +143,23 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+	}
+	
+	public long eventToMs (JSONObject event){
+		int year=0,month=0,day=0,hour=0,minute=0;
+		try {
+			year = event.getInt("year");
+			month = event.getInt("month");
+			day = event.getInt("day");
+			hour = event.getInt("hour");
+			minute = event.getInt("minute");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		Time now = new Time();
+		now.set(0,minute,hour,day,month,year);
+		return now.toMillis(false);
 	}
 	
 	@SuppressLint("SimpleDateFormat")
@@ -174,6 +218,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		} else if (id == R.id.create_date) {
 			Intent intent = new Intent(this, CreateEvent.class);
 			startActivity(intent);
+		} else if (id == R.id.clear_all){
+			promptToDeleteAll();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -233,7 +279,37 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState){
 			super.onActivityCreated(savedInstanceState);
-			CardListAdapter cla = new CardListAdapter(getActivity(), daysUntil);
+			getListView().setDivider(null);
+			getListView().setDividerHeight(0);
+			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+
+				@Override
+				public boolean onItemLongClick(AdapterView<?> parent,
+						View view, int position, long id) {
+					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+					alertDialogBuilder.setTitle("Temp Options");
+					alertDialogBuilder.setMessage("Do you want to delete this event?")
+					.setCancelable(true)
+					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+		                   public void onClick(DialogInterface dialog, int id) {
+		                	   dialog.dismiss();
+		                   }
+		               })
+		               .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+		                   public void onClick(DialogInterface dialog, int id) {
+		                	   dialog.dismiss();
+		                   }
+		               });
+	 
+					// create alert dialog
+					AlertDialog alertDialog = alertDialogBuilder.create();
+	 
+					// show it 
+					alertDialog.show();
+					return false;
+				}
+		    });
+			cla = new CardListAdapter(getActivity(), daysUntil);
 			setListAdapter(cla);
 		}
 	}
@@ -244,9 +320,69 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState){
 			super.onActivityCreated(savedInstanceState);
-			String[] items = {"Chris","is","retarded"};
-			CardListAdapter cla = new CardListAdapter(getActivity(), daysSince);
-			setListAdapter(cla);
+			getListView().setDivider(null);
+			getListView().setDividerHeight(0);
+		    getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+
+				@Override
+				public boolean onItemLongClick(AdapterView<?> parent,
+						View view, int position, long id) {
+					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+					alertDialogBuilder.setTitle("Temp Options");
+					alertDialogBuilder.setMessage("Do you want to delete this event?")
+					.setCancelable(true)
+					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+		                   public void onClick(DialogInterface dialog, int id) {
+		                	   dialog.dismiss();
+		                   }
+		               })
+		               .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+		                   public void onClick(DialogInterface dialog, int id) {
+		                	   dialog.dismiss();
+		                   }
+		               });
+	 
+					// create alert dialog
+					AlertDialog alertDialog = alertDialogBuilder.create();
+	 
+					// show it 
+					alertDialog.show();
+					return false;
+				}
+		    });
+			cla2 = new CardListAdapter(getActivity(), daysSince);
+			setListAdapter(cla2);
 		}
+	}
+	
+	public void promptToDeleteAll(){
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+		alertDialogBuilder.setTitle("Delete All Events");
+		alertDialogBuilder.setMessage("Are you sure that you want to delete all events?")
+		.setCancelable(true)
+		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog, int id) {
+            	   String[] files = fileList();
+            	   for (int i = 0; i < files.length; i++){
+            		   deleteFile(files[i]);
+            	   }
+	           		daysUntil = new ArrayList<JSONObject>();
+	        		daysSince = new ArrayList<JSONObject>();
+	        		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+	        		mViewPager = (ViewPager) findViewById(R.id.pager);
+	        		mViewPager.setAdapter(mSectionsPagerAdapter);
+               }
+           })
+           .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog, int id) {
+            	   dialog.dismiss();
+               }
+           });
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it 
+		alertDialog.show();
 	}
 }

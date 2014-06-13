@@ -13,5 +13,7 @@
     <string name="change_date">Change date</string>
     <string name="change_time">Change time</string>
     <string name="event_name">Event name</string>
-
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+	<string name="delete_all">Delete All</string>
 </resources>

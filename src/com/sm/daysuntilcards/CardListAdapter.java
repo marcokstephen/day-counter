@@ -1,22 +1,28 @@
 package com.sm.daysuntilcards;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.text.format.Time;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.List;
-
 public class CardListAdapter extends BaseAdapter{
 	
 	private Context context;
 	private List<JSONObject> eventJsonList;
 	private LayoutInflater myInflater;
+	private String days = "days";
 	
 	public CardListAdapter(Context c, List<JSONObject> eventList){
 		context = c;
@@ -44,6 +50,7 @@ public class CardListAdapter extends BaseAdapter{
 		JSONObject event = (JSONObject) getItem(position);
 		int year=0,month=0,day=0,hour=0,minute=0;
 		String title = "placeholder";
+		long differenceDays = 0;
 		try {
 			year = event.getInt("year");
 			month = event.getInt("month");
@@ -51,6 +58,19 @@ public class CardListAdapter extends BaseAdapter{
 			hour = event.getInt("hour");
 			minute = event.getInt("minute");
 			title = event.getString("name");
+			Time now = new Time();
+			now.setToNow();
+			long currentDateInMs = now.toMillis(false);
+			now.set(0,minute,hour,day,month,year);
+			long eventDateInMs = now.toMillis(false);
+			long difference = Math.abs(currentDateInMs-eventDateInMs);
+			differenceDays = difference/(1000*60*60*24);
+			if (differenceDays == 1){
+				days = "day";
+			} else {
+				days = "days";
+			}
+			Log.d("OUTPUT","Current: " + currentDateInMs + ", Event: " + eventDateInMs);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -58,8 +78,10 @@ public class CardListAdapter extends BaseAdapter{
 		if (convertView == null){
 			convertView = myInflater.inflate(R.layout.card_front, null);
 		}
-		TextView cardTextView = (TextView)convertView.findViewById(R.id.cardTextView);
+		TextView cardTextView = (TextView)convertView.findViewById(R.id.eventNameView);
 		cardTextView.setText(title);
+		TextView daysView = (TextView)convertView.findViewById(R.id.daysView);
+		daysView.setText(differenceDays + " " + days);
 		return convertView;
 	}
 }

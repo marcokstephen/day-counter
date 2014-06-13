@@ -1,18 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout 
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   android:layout_width="match_parent"
-   android:layout_height="match_parent"
-   android:gravity="center"
-   android:background="#E0EEEE">
-   <TextView
-      android:id="@+id/cardTextView"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:gravity="center"
-      android:layout_margin="15dp"
-      android:padding="15dp"
-      android:background="@drawable/card_background"
-      android:text="Hello Card!\nThis is an example of a card..."/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E0EEEE"
+    android:gravity="center" >
+        
+  	<RelativeLayout
+		android:layout_height="127dp"
+		android:layout_width="fill_parent"
+		android:background="@drawable/card_background"
+		android:layout_marginRight="15dp"
+		android:layout_marginLeft="15dp"
+		android:layout_marginTop="5dp"
+		android:layout_marginBottom="5dp"
+		>
+
+ 		<TextView
+ 		    android:id="@+id/eventNameView"
+ 		    android:layout_width="wrap_content"
+ 		    android:layout_height="wrap_content"
+ 		    android:layout_centerHorizontal="true"
+ 		    android:layout_alignParentTop="true"
+ 		    android:fontFamily="Roboto"
+ 		    android:text="title"
+ 		    android:textSize="20sp"
+ 		    android:paddingTop="2dp" />
+ 		
+ 		 		<TextView
+ 		    android:id="@+id/daysView"
+ 		    android:layout_width="wrap_content"
+ 		    android:layout_height="wrap_content"
+ 		    android:layout_centerHorizontal="true"
+ 		    android:layout_centerVertical="true"
+ 		    android:fontFamily="Roboto"
+ 		    android:text="12 days"
+ 		    android:textSize="40sp" />
+  	    
+    </RelativeLayout>
+
 </LinearLayout>
