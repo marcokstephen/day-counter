@@ -378,11 +378,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             	   dialog.dismiss();
                }
            });
-
-		// create alert dialog
 		AlertDialog alertDialog = alertDialogBuilder.create();
-
-		// show it 
 		alertDialog.show();
 	}
 }
