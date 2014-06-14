@@ -61,7 +61,9 @@ public class EditEvent extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		Intent intent = getIntent();
-		String eventString = intent.getStringExtra("com.sm.daysuntilcards.EVENT");
+		final String eventString = intent.getStringExtra("com.sm.daysuntilcards.EVENT");
+		final int eventPosition = intent.getIntExtra("com.sm.daysuntilcards.POSITION", 0);
+		final boolean untilList = intent.getBooleanExtra("com.sm.daysuntilcards.UNTIL", true);
 		
 		JSONObject jsonEvent = new JSONObject();
 		try {
@@ -207,7 +209,13 @@ public class EditEvent extends Activity {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					//TODO: update in list
+					
+					if (untilList){
+						MainActivity.daysUntil.remove(eventPosition);
+					} else {
+						MainActivity.daysSince.remove(eventPosition);
+					}
+					
 					if (MainActivity.checkIfAfterCurrentDate(obj, c)){
 						MainActivity.daysUntil.add(obj);
 						MainActivity.cla.notifyDataSetChanged();

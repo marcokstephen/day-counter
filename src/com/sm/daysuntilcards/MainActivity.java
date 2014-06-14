@@ -51,9 +51,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		final Calendar c = Calendar.getInstance();
+		
 		daysUntil = new ArrayList<JSONObject>();
 		daysSince = new ArrayList<JSONObject>();
+		Calendar c = Calendar.getInstance();
 		
 		FileInputStream fis;
 		try {
@@ -147,7 +148,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		}
 	}
 	
-	public long eventToMs (JSONObject event){
+	public static long eventToMs (JSONObject event){
 		int year=0,month=0,day=0,hour=0,minute=0;
 		try {
 			year = event.getInt("year");
@@ -319,6 +320,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 					public void onClick(DialogInterface dialog, int which) {
 						Intent intent = new Intent(getActivity(), EditEvent.class);
 						intent.putExtra("com.sm.daysuntilcards.EVENT", daysUntil.get(position).toString());
+						intent.putExtra("com.sm.daysuntilcards.POSITION", position);
+						intent.putExtra("com.sm.daysuntilcards.UNTIL", true);
 						startActivity(intent);
 						dialog.dismiss();
 					}
@@ -427,7 +430,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		alertDialog.show();
 	}
 	
-	public JSONObject addDaysToObj(JSONObject event){
+	public static JSONObject addDaysToObj(JSONObject event){
 		//only runs if repeat is set to 1 (daily), 2 (weekly), 3 (monthly), or 4 (yearly)
 		
 		JSONObject dateJsonObj = event;
