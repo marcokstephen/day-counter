@@ -10,27 +10,18 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.sm.daysuntilcards.CreateEvent.DatePickerFragment;
-import com.sm.daysuntilcards.CreateEvent.TimePickerFragment;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -44,7 +35,6 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.os.Build;
 import android.preference.PreferenceManager;
 
 @SuppressLint("SimpleDateFormat")
@@ -64,13 +54,15 @@ public class EditEvent extends Activity {
 	static String name = "";
 	static int repeat = 0, repeatRate = 0;
 	static boolean weekends = false, since = false;
-
+	static String oldname = "";
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		Intent intent = getIntent();
 		String eventString = intent.getStringExtra("com.sm.daysuntilcards.EVENT");
+		
 		JSONObject jsonEvent = new JSONObject();
 		try {
 			jsonEvent = new JSONObject(eventString);
@@ -84,6 +76,7 @@ public class EditEvent extends Activity {
 			since = jsonEvent.getBoolean("since");
 			repeat = jsonEvent.getInt("repeat");
 			repeatRate = jsonEvent.getInt("repeatRate");
+			oldname = name;
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -94,20 +87,210 @@ public class EditEvent extends Activity {
 		twentyFourHourClock = prefs.getBoolean("24hour",false);
 		final Calendar c = Calendar.getInstance();
 		
-		EditText eventText = (EditText) findViewById(R.id.eventText);
-		EditText repeatRateText = (EditText) findViewById(R.id.repeatRateEditText);
-		TextView dateView = (TextView) findViewById(R.id.dateView);
-		TextView timeView = (TextView) findViewById(R.id.timeView);
-		TextView repeatRateView1 = (TextView) findViewById(R.id.repeatRateView1);
-		TextView repeatRateView2 = (TextView) findViewById(R.id.repeatRateView2);
-		CheckBox weekBox = (CheckBox) findViewById(R.id.weekBox);
-		CheckBox sinceBox = (CheckBox) findViewById(R.id.sinceBox);
-		Button dateButton = (Button) findViewById(R.id.dateButton);
-		Button timeButton = (Button) findViewById(R.id.timeButton);
-		Button createButton = (Button) findViewById(R.id.createButton);
-		Spinner repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
+		final EditText eventText = (EditText) findViewById(R.id.eventText);
+		final EditText repeatRateText = (EditText) findViewById(R.id.repeatRateEditText);
+		final TextView dateView = (TextView) findViewById(R.id.dateView);
+		final TextView timeView = (TextView) findViewById(R.id.timeView);
+		final CheckBox weekBox = (CheckBox) findViewById(R.id.weekBox);
+		final CheckBox sinceBox = (CheckBox) findViewById(R.id.sinceBox);
+		final Button dateButton = (Button) findViewById(R.id.dateButton);
+		final Button timeButton = (Button) findViewById(R.id.timeButton);
+		final Button createButton = (Button) findViewById(R.id.createButton);
+		final Spinner repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
 		
 		eventText.setText(name);
 		if (repeatRate != 0) repeatRateText.setText(""+repeatRate);
+		weekBox.setChecked(weekends);
+		sinceBox.setChecked(since);
+		try {
+			dateView.setText(toDateFormat.format(fromDateFormat.parse(day+"/"+(month+1)+"/"+year)));
+			timeView.setText(toTimeFormat.format(fromTimeFormat.parse(String.format("%02d",hour)+":"+String.format("%02d",minute))));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		if (sinceBox.isChecked()){
+			repeatSpinner.setEnabled(false);
+			showSpinnerMessages(false);
+		}
+		sinceBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				if (isChecked){
+					repeatSpinner.setEnabled(false);
+					repeatSpinner.setSelection(0); //also sets showSpinnerMessages(false)
+				} else {
+					repeatSpinner.setEnabled(true);
+					daysSinceBox = false;
+				}
+			}
+		});
+		
+		ArrayAdapter<CharSequence> repeatadapter = ArrayAdapter.createFromResource(this, R.array.spinnerArray, android.R.layout.simple_spinner_item);
+		repeatadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		repeatSpinner.setAdapter(repeatadapter);
+		repeatSpinner.setOnItemSelectedListener(new OnItemSelectedListener(){
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (position == 0){ //don't repeat
+					showSpinnerMessages(false);
+				} else {
+					if (position == 1){
+						TextView repeatRateView2 = (TextView) findViewById(R.id.repeatRateView2);
+						repeatRateView2.setText("days");
+					} else if (position == 2){
+						TextView repeatRateView2 = (TextView) findViewById(R.id.repeatRateView2);
+						repeatRateView2.setText("weeks");
+					} else if (position == 3) {
+						TextView repeatRateView2 = (TextView) findViewById(R.id.repeatRateView2);
+						repeatRateView2.setText("months");
+					} else {
+						TextView repeatRateView2 = (TextView) findViewById(R.id.repeatRateView2);
+						repeatRateView2.setText("years");
+					}
+					showSpinnerMessages(true);
+				}
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		});
+		repeatSpinner.setSelection(repeat);
+		createButton.setText("Edit Event");
+		
+		timeButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v){
+				showTimePickerDialog(v);
+			}
+		});
+		dateButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v){
+				showDatePickerDialog(v);
+			}
+		});
+		
+		createButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v){
+				if (eventText.getText().toString().matches("")){
+					Toast.makeText(EditEvent.this, "Missing event name", Toast.LENGTH_SHORT).show();
+				    return;
+				} else if (repeatSpinner.getSelectedItemPosition() != 0 &&
+						(repeatRateText.getText().toString().matches("") ||
+								Integer.parseInt(repeatRateText.getText().toString()) == 0)){
+					Toast.makeText(EditEvent.this, "Missing repeat rate", Toast.LENGTH_SHORT).show();
+				    return;
+				} else {
+					if (repeatSpinner.getSelectedItemPosition() == 0) repeatRateText.setText("0");
+					boolean weekbool = weekBox.isChecked();
+					JSONObject obj = new JSONObject();
+					try{
+						String filename = eventText.getText().toString();
+						obj.put("name", eventText.getText());
+						obj.put("day", day);
+						obj.put("month", month);
+						obj.put("year", year);
+						obj.put("hour", hour);
+						obj.put("minute", minute);
+						obj.put("weekends", weekbool);
+						obj.put("since", daysSinceBox);
+						obj.put("repeat", repeatSpinner.getSelectedItemPosition());
+						obj.put("repeatRate", Integer.parseInt(repeatRateText.getText().toString()));
+						String stringDate = obj.toString();
+						deleteFile(oldname);
+						FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
+						fos.write(stringDate.getBytes());
+						fos.close();
+					} catch (JSONException e){
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					//TODO: update in list
+					if (MainActivity.checkIfAfterCurrentDate(obj, c)){
+						MainActivity.daysUntil.add(obj);
+						MainActivity.cla.notifyDataSetChanged();
+					} else {
+						MainActivity.daysSince.add(obj);
+						MainActivity.cla2.notifyDataSetChanged();
+					}
+					finish();
+				}
+			}
+		});
+	}
+	
+	public void showSpinnerMessages(boolean show){
+		final TextView repeatRateView1 = (TextView) findViewById(R.id.repeatRateView1);
+		final TextView repeatRateView2 = (TextView) findViewById(R.id.repeatRateView2);
+		final EditText repeatRateEditText = (EditText) findViewById(R.id.repeatRateEditText);
+		if (show){
+			repeatRateView1.setVisibility(View.VISIBLE);
+			repeatRateView2.setVisibility(View.VISIBLE);
+			repeatRateEditText.setVisibility(View.VISIBLE);
+		} else {
+			repeatRateView1.setVisibility(View.INVISIBLE);
+			repeatRateView2.setVisibility(View.INVISIBLE);
+			repeatRateEditText.setVisibility(View.INVISIBLE);
+		}
+	}
+	
+	public void showTimePickerDialog(View v) {
+	    DialogFragment newFragment = new TimePickerFragment();
+	    newFragment.show(getFragmentManager(), "timePicker");
+	}
+	public void showDatePickerDialog(View v) {
+	    DialogFragment newFragment = new DatePickerFragment();
+	    newFragment.show(getFragmentManager(), "datePicker");
+	}
+	
+	public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+		@Override
+		public Dialog onCreateDialog (Bundle savedInstanceState) {
+			return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
+		}
+
+		@Override
+		public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfDay) {
+			hour = hourOfDay;
+			minute = minuteOfDay;
+			TextView timeText = (TextView)getActivity(). findViewById(R.id.timeView);
+			String fromTimeString = String.format("%02d",hour)+":"+String.format("%02d",minute);
+			String outputTimeString = fromTimeString;
+			Date eventTime = new Date();
+			if (!twentyFourHourClock){
+				try {
+					eventTime = fromTimeFormat.parse(outputTimeString);
+					outputTimeString = toTimeFormat.format(eventTime);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+			timeText.setText(outputTimeString);
+		}
+	}
+	public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+		
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			return new DatePickerDialog(getActivity(), this, year, month, day);
+		}
+		
+		public void onDateSet(DatePicker view, int yearSet, int monthSet, int daySet) {
+			year = yearSet;
+			month = monthSet;
+			day = daySet;
+			TextView dateView = (TextView)getActivity(). findViewById(R.id.dateView);
+			String dateString = day+"/"+(month+1)+"/"+year;
+			String outputDateString = "";
+			try {
+				eventDate = fromDateFormat.parse(dateString);
+				outputDateString = toDateFormat.format(eventDate);
+			} catch (ParseException e1) {
+				e1.printStackTrace();
+			}
+			dateView.setText(outputDateString);
+		}
 	}
 }
