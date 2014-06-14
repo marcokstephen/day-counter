@@ -2,6 +2,7 @@ package com.sm.daysuntilcards;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +25,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,6 +39,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 
+@SuppressLint("SimpleDateFormat")
 public class MainActivity extends Activity implements ActionBar.TabListener {
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
@@ -67,48 +70,29 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				Log.d("OUTPUT",value);
 				try {
 					JSONObject dateJsonObj = new JSONObject(value);
-					int year=0,month=0,day=0,hour=0,minute=0;
-					boolean weekends=false,since=false;
-					int repeat=0,repeatRate=0;
+					boolean since=false;
+					String name = "";
 					try {
-						year = dateJsonObj.getInt("year");
-						month = dateJsonObj.getInt("month");
-						day = dateJsonObj.getInt("day");
-						hour = dateJsonObj.getInt("hour");
-						minute = dateJsonObj.getInt("minute");
-						weekends = dateJsonObj.getBoolean("weekends");
+						name = dateJsonObj.getString("name");
 						since = dateJsonObj.getBoolean("since");
-						repeat = dateJsonObj.getInt("repeat");
-						repeatRate = dateJsonObj.getInt("repeatRate");
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 					boolean isAfterCurrentDate = checkIfAfterCurrentDate(dateJsonObj, c);
 					if (isAfterCurrentDate){
 						daysUntil.add(dateJsonObj);
-					} else { //need to check if repeats are required
-						if (since) {
-							daysSince.add(dateJsonObj);
-						} else if (repeat == 0){ //no repeat
-							//deleteFile(listFile);
-						} else if (repeat == 1){ //daily
-							//generateRepeat(repeat, c);
-						} else if (repeat == 2) { //weekly
-							//generateRepeat(repeat, c);
-						} else if (repeat == 3) { //monthly
-							//generateRepeat(repeat, c);
-						} else if (repeat == 4) { //yearly
-							do{
-								year += repeatRate;
-								dateJsonObj.put("year", year);
-							} while (!checkIfAfterCurrentDate(dateJsonObj,c));
-							daysUntil.add(dateJsonObj); //adding to daysUntil because it is now an upcoming date
-						}
+					} else if (since) {
+						daysSince.add(dateJsonObj);
+					} else {
+						dateJsonObj = addDaysToObj(dateJsonObj);
+						FileOutputStream fos = openFileOutput(name, Context.MODE_PRIVATE);
+						fos.write(dateJsonObj.toString().getBytes());
+						fos.close();
+						daysUntil.add(dateJsonObj); //adding to daysUntil because it is now an upcoming date
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -147,9 +131,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
-		// When swiping between different sections, select the corresponding
-		// tab. We can also use ActionBar.Tab#select() to do this if we have
-		// a reference to the Tab.
 		mViewPager
 				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 					@Override
@@ -160,10 +141,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
 		// For each of the sections in the app, add a tab to the action bar.
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-			// Create a tab with text corresponding to the page title defined by
-			// the adapter. Also specify this Activity object, which implements
-			// the TabListener interface, as the callback (listener) for when
-			// this tab is selected.
 			actionBar.addTab(actionBar.newTab()
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
@@ -439,5 +416,56 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
            });
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
+	}
+	
+	public JSONObject addDaysToObj(JSONObject event){
+		//only runs if repeat is set to 1 (daily), 2 (weekly), 3 (monthly), or 4 (yearly)
+		
+		JSONObject dateJsonObj = event;
+		int year=0,month=0,day=0;
+		int repeat=0,repeatRate=0;
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		Calendar c = Calendar.getInstance();
+		Calendar currentDate = Calendar.getInstance();
+		try {
+			year = dateJsonObj.getInt("year");
+			month = dateJsonObj.getInt("month");
+			day = dateJsonObj.getInt("day");
+			repeat = dateJsonObj.getInt("repeat");
+			repeatRate = dateJsonObj.getInt("repeatRate");
+			c.setTime(sdf.parse(day+"-"+(month+1)+"-"+year));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		if (repeat == 1){ //daily
+			do{
+				c.add(Calendar.DATE, repeatRate);
+			} while (c.before(currentDate));
+		} else if (repeat == 2) { //weekly
+			do{
+				c.add(Calendar.DATE, repeatRate*7);
+			} while (c.before(currentDate));
+		} else if (repeat == 3) { //monthly
+			do{
+				c.add(Calendar.MONTH, repeatRate);
+			} while (c.before(currentDate));
+		} else if (repeat == 4) { //yearly
+			do {
+				c.add(Calendar.YEAR, repeatRate);
+			} while (c.before(currentDate));
+		}
+		year = c.get(Calendar.YEAR);
+		month = c.get(Calendar.MONTH);
+		day = c.get(Calendar.DATE);
+		try {
+			dateJsonObj.put("year", year);
+			dateJsonObj.put("month", month);
+			dateJsonObj.put("day", day);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return dateJsonObj;
 	}
 }
