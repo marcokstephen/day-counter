@@ -1,8 +1,5 @@
 package com.sm.daysuntilcards;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
@@ -10,7 +7,6 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.text.format.Time;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +15,10 @@ import android.widget.TextView;
 
 public class CardListAdapter extends BaseAdapter{
 	
-	private Context context;
 	private List<JSONObject> eventJsonList;
 	private LayoutInflater myInflater;
-	private String days = "days";
 	
 	public CardListAdapter(Context c, List<JSONObject> eventList){
-		context = c;
 		eventJsonList = eventList;
 		myInflater = (LayoutInflater)c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}

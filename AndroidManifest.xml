@@ -43,6 +43,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcards.MainActivity" />
         </activity>
+        <activity
+            android:name="com.sm.daysuntilcards.EditEvent"
+            android:label="@string/title_activity_edit_event"
+            android:parentActivityName="com.sm.daysuntilcards.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sm.daysuntilcards.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

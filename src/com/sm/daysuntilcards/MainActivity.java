@@ -297,10 +297,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 						e.printStackTrace();
 					}
 					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-					alertDialogBuilder.setTitle("Delete Event");
-					alertDialogBuilder.setMessage("Are you sure you want to delete " + name + "?")
+					alertDialogBuilder.setTitle("Modify Event");
+					alertDialogBuilder.setMessage(name)
 					.setCancelable(true)
-					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+					.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
 		                   public void onClick(DialogInterface dialog, int id) {
 		                	   String name = "temp";
 			   					try {
@@ -314,7 +314,16 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		                	   dialog.dismiss();
 		                   }
 		               })
-		               .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+	               .setNeutralButton(R.string.edit, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent(getActivity(), EditEvent.class);
+						intent.putExtra("com.sm.daysuntilcards.EVENT", daysUntil.get(position).toString());
+						startActivity(intent);
+						dialog.dismiss();
+					}
+	               })
+	               .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 		                   public void onClick(DialogInterface dialog, int id) {
 		                	   dialog.dismiss();
 		                   }
