@@ -280,13 +280,26 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
 				@Override
 				public boolean onItemLongClick(AdapterView<?> parent,
-						View view, int position, long id) {
+						View view, final int position, long id) {
+					String name = "this event";
+					try {
+						name = daysUntil.get(position).getString("name");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-					alertDialogBuilder.setTitle("Temp Options");
-					alertDialogBuilder.setMessage("Do you want to delete this event?")
+					alertDialogBuilder.setTitle("Delete Event");
+					alertDialogBuilder.setMessage("Are you sure you want to delete " + name + "?")
 					.setCancelable(true)
 					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 		                   public void onClick(DialogInterface dialog, int id) {
+		                	   String name = "temp";
+			   					try {
+									name = daysUntil.get(position).getString("name");
+								} catch (JSONException e) {
+									e.printStackTrace();
+								}
+		                	   getActivity().deleteFile(name);
 		                	   dialog.dismiss();
 		                   }
 		               })
@@ -321,13 +334,26 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
 				@Override
 				public boolean onItemLongClick(AdapterView<?> parent,
-						View view, int position, long id) {
+						View view, final int position, long id) {
+					String name = "this event";
+					try {
+						name = daysSince.get(position).getString("name");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-					alertDialogBuilder.setTitle("Temp Options");
-					alertDialogBuilder.setMessage("Do you want to delete this event?")
+					alertDialogBuilder.setTitle("Delete Event");
+					alertDialogBuilder.setMessage("Are you sure you want to delete " + name + "?")
 					.setCancelable(true)
 					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 		                   public void onClick(DialogInterface dialog, int id) {
+		                	   String name = "temp";
+			   					try {
+									name = daysSince.get(position).getString("name");
+								} catch (JSONException e) {
+									e.printStackTrace();
+								}
+		                	   getActivity().deleteFile(name);
 		                	   dialog.dismiss();
 		                   }
 		               })
