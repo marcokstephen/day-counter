@@ -38,6 +38,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemLongClickListener;
 
 @SuppressLint("SimpleDateFormat")
@@ -296,60 +297,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			getListView().setDivider(null);
 			getListView().setDividerHeight(0);
 			registerForContextMenu(getListView());
-			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
-
-				@Override
-				public boolean onItemLongClick(AdapterView<?> parent,
-						View view, final int position, long id) {
-					String name = "this event";
-					try {
-						name = daysUntil.get(position).getString("name");
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-					alertDialogBuilder.setTitle("Modify Event");
-					alertDialogBuilder.setMessage(name)
-					.setCancelable(true)
-					.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-		                   public void onClick(DialogInterface dialog, int id) {
-		                	   String name = "temp";
-			   					try {
-									name = daysUntil.get(position).getString("name");
-								} catch (JSONException e) {
-									e.printStackTrace();
-								}
-		                	   getActivity().deleteFile(name);
-		                	   daysUntil.remove(position);
-		                	   cla.notifyDataSetChanged();
-		                	   dialog.dismiss();
-		                   }
-		               })
-	               .setNeutralButton(R.string.edit, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Intent intent = new Intent(getActivity(), EditEvent.class);
-						intent.putExtra("com.sm.daysuntilcards.EVENT", daysUntil.get(position).toString());
-						intent.putExtra("com.sm.daysuntilcards.POSITION", position);
-						intent.putExtra("com.sm.daysuntilcards.UNTIL", true);
-						startActivity(intent);
-						dialog.dismiss();
-					}
-	               })
-	               .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-		                   public void onClick(DialogInterface dialog, int id) {
-		                	   dialog.dismiss();
-		                   }
-		               });
-	 
-					// create alert dialog
-					AlertDialog alertDialog = alertDialogBuilder.create();
-	 
-					// show it 
-					alertDialog.show();
-					return false;
-				}
-		    });
 			cla = new CardListAdapter(getActivity(), daysUntil);
 			setListAdapter(cla);
 		}
@@ -365,7 +312,31 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	   @Override
 	   public boolean onContextItemSelected(MenuItem item){
 		   if (item.getGroupId() == FRAGMENT_GROUPID){
-			   
+			   AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+			   int position = info.position;
+				switch (item.getItemId()){
+				case MENU_EDIT:
+					Intent intent = new Intent(getActivity(), EditEvent.class);
+					intent.putExtra("com.sm.daysuntilcards.EVENT", daysUntil.get(position).toString());
+					Log.d("OUTPUTINFO",daysUntil.get(position).toString());
+					intent.putExtra("com.sm.daysuntilcards.POSITION", position);
+					intent.putExtra("com.sm.daysuntilcards.UNTIL", true);
+					startActivity(intent);
+					return false;
+				case MENU_REMOVE:
+					String name = "temp";
+						try {
+						name = daysUntil.get(position).getString("name");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+	        	   getActivity().deleteFile(name);
+	        	   daysUntil.remove(position);
+	        	   cla.notifyDataSetChanged();
+	        	   return false;
+				default:
+					return super.onContextItemSelected(item);
+				}
 		   }
 		   return false;
 	   }
@@ -383,63 +354,49 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			super.onActivityCreated(savedInstanceState);
 			getListView().setDivider(null);
 			getListView().setDividerHeight(0);
-		    getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
-
-		    	@Override
-				public boolean onItemLongClick(AdapterView<?> parent,
-						View view, final int position, long id) {
-					String name = "this event";
-					try {
+			registerForContextMenu(getListView());
+			cla2 = new CardListAdapter(getActivity(), daysSince);
+			setListAdapter(cla2);
+		}
+		
+		@Override
+	    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+	        super.onCreateContextMenu(menu, v, menuInfo);
+	        menu.add(FRAGMENT_GROUPID, MENU_EDIT, Menu.NONE, "Edit");
+	        menu.add(FRAGMENT_GROUPID, MENU_REMOVE, Menu.NONE, "Remove");
+	        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+	    }
+	   
+	   @Override
+	   public boolean onContextItemSelected(MenuItem item){
+		   if (item.getGroupId() == FRAGMENT_GROUPID){
+			   AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+			   int position = info.position;
+				switch (item.getItemId()){
+				case MENU_EDIT:
+					Intent intent = new Intent(getActivity(), EditEvent.class);
+					intent.putExtra("com.sm.daysuntilcards.EVENT", daysSince.get(position).toString());
+					intent.putExtra("com.sm.daysuntilcards.POSITION", position);
+					intent.putExtra("com.sm.daysuntilcards.UNTIL", false);
+					startActivity(intent);
+					return false;
+				case MENU_REMOVE:
+					String name = "temp";
+						try {
 						name = daysSince.get(position).getString("name");
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
-					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-					alertDialogBuilder.setTitle("Modify Event");
-					alertDialogBuilder.setMessage(name)
-					.setCancelable(true)
-					.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-		                   public void onClick(DialogInterface dialog, int id) {
-		                	   String name = "temp";
-			   					try {
-									name = daysSince.get(position).getString("name");
-								} catch (JSONException e) {
-									e.printStackTrace();
-								}
-		                	   getActivity().deleteFile(name);
-		                	   daysSince.remove(position);
-		                	   cla2.notifyDataSetChanged();
-		                	   dialog.dismiss();
-		                   }
-		               })
-	               .setNeutralButton(R.string.edit, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Intent intent = new Intent(getActivity(), EditEvent.class);
-						intent.putExtra("com.sm.daysuntilcards.EVENT", daysSince.get(position).toString());
-						intent.putExtra("com.sm.daysuntilcards.POSITION", position);
-						intent.putExtra("com.sm.daysuntilcards.UNTIL", false);
-						startActivity(intent);
-						dialog.dismiss();
-					}
-	               })
-	               .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-		                   public void onClick(DialogInterface dialog, int id) {
-		                	   dialog.dismiss();
-		                   }
-		               });
-	 
-					// create alert dialog
-					AlertDialog alertDialog = alertDialogBuilder.create();
-	 
-					// show it 
-					alertDialog.show();
-					return false;
+	        	   getActivity().deleteFile(name);
+	        	   daysSince.remove(position);
+	        	   cla2.notifyDataSetChanged();
+	        	   return false;
+				default:
+					return super.onContextItemSelected(item);
 				}
-		    });
-			cla2 = new CardListAdapter(getActivity(), daysSince);
-			setListAdapter(cla2);
-		}
+		   }
+		   return false;
+	   }
 	}
 	
 	public static class DetailedFragment extends Fragment {
