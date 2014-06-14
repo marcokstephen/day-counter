@@ -355,7 +355,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			getListView().setDividerHeight(0);
 		    getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
-				@Override
+		    	@Override
 				public boolean onItemLongClick(AdapterView<?> parent,
 						View view, final int position, long id) {
 					String name = "this event";
@@ -365,10 +365,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 						e.printStackTrace();
 					}
 					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-					alertDialogBuilder.setTitle("Delete Event");
-					alertDialogBuilder.setMessage("Are you sure you want to delete " + name + "?")
+					alertDialogBuilder.setTitle("Modify Event");
+					alertDialogBuilder.setMessage(name)
 					.setCancelable(true)
-					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+					.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
 		                   public void onClick(DialogInterface dialog, int id) {
 		                	   String name = "temp";
 			   					try {
@@ -382,7 +382,18 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		                	   dialog.dismiss();
 		                   }
 		               })
-		               .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+	               .setNeutralButton(R.string.edit, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent(getActivity(), EditEvent.class);
+						intent.putExtra("com.sm.daysuntilcards.EVENT", daysSince.get(position).toString());
+						intent.putExtra("com.sm.daysuntilcards.POSITION", position);
+						intent.putExtra("com.sm.daysuntilcards.UNTIL", false);
+						startActivity(intent);
+						dialog.dismiss();
+					}
+	               })
+	               .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 		                   public void onClick(DialogInterface dialog, int id) {
 		                	   dialog.dismiss();
 		                   }
@@ -399,6 +410,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			cla2 = new CardListAdapter(getActivity(), daysSince);
 			setListAdapter(cla2);
 		}
+	}
+	
+	public static class DetailedFragment extends Fragment {
+		
 	}
 	
 	public void promptToDeleteAll(){

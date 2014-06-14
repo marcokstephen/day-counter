@@ -118,6 +118,18 @@ public class CreateEvent extends Activity {
 			}
 		});
 		
+		timeView.setText(outputTimeString);
+		final TextView dateView = (TextView) findViewById(R.id.dateView);
+		String dateString = day+"/"+(month+1)+"/"+year;
+		String outputDateString = "";
+		try {
+			eventDate = fromDateFormat.parse(dateString);
+			outputDateString = toDateFormat.format(eventDate);
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+		dateView.setText(outputDateString);
+		
 		CheckBox sinceBox = (CheckBox) findViewById(R.id.sinceBox);
 		daysSinceBox = prefs.getBoolean("daysSinceDefault", false);
 		if (daysSinceBox){
@@ -130,27 +142,22 @@ public class CreateEvent extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				if (isChecked){
+				Date currentDate = null;
+				try {
+					currentDate = fromDateFormat.parse(c.get(Calendar.DATE)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.YEAR));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				if (isChecked || !eventDate.after(currentDate)){
 					repeatSpinner.setEnabled(false);
 					repeatSpinner.setSelection(0); //also sets showSpinnerMessages(false)
+					if (!isChecked) daysSinceBox = true;
 				} else {
 					repeatSpinner.setEnabled(true);
 					daysSinceBox = false;
 				}
 			}
 		});
-		
-		timeView.setText(outputTimeString);
-		final TextView dateView = (TextView) findViewById(R.id.dateView);
-		String dateString = day+"/"+(month+1)+"/"+year;
-		String outputDateString = "";
-		try {
-			eventDate = fromDateFormat.parse(dateString);
-			outputDateString = toDateFormat.format(eventDate);
-		} catch (ParseException e1) {
-			e1.printStackTrace();
-		}
-		dateView.setText(outputDateString);
 		
 		Button timeButton = (Button) findViewById(R.id.timeButton);
 		timeButton.setOnClickListener(new View.OnClickListener() {
@@ -284,6 +291,23 @@ public class CreateEvent extends Activity {
 				e1.printStackTrace();
 			}
 			dateView.setText(outputDateString);
+			
+			Calendar c = Calendar.getInstance();
+			Date currentDate=null,eventDate = null;
+			try {
+				currentDate = fromDateFormat.parse(c.get(Calendar.DATE)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.YEAR));
+				eventDate = fromDateFormat.parse(dateString);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			Spinner repeatSpinner = (Spinner) getActivity().findViewById(R.id.repeatSpinner);
+			CheckBox sinceBox = (CheckBox) getActivity().findViewById(R.id.sinceBox);
+			if (!eventDate.after(currentDate) || sinceBox.isChecked()){
+				repeatSpinner.setEnabled(false);
+				repeatSpinner.setSelection(0);
+			} else {
+				repeatSpinner.setEnabled(true);
+			}
 		}
 	}
 }
