@@ -40,10 +40,10 @@ import android.widget.AdapterView.OnItemLongClickListener;
 public class MainActivity extends Activity implements ActionBar.TabListener {
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
-	static List<JSONObject> daysUntil;
-	static List<JSONObject> daysSince;
-	static CardListAdapter cla;
-	static CardListAdapter cla2;
+	public static List<JSONObject> daysUntil;
+	public static List<JSONObject> daysSince;
+	public static CardListAdapter cla;
+	public static CardListAdapter cla2;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,14 +64,46 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 					value += new String(input);
 				}
 				fis.close();
+				Log.d("OUTPUT",value);
 				try {
-					Log.d("OUTPUT",value);
 					JSONObject dateJsonObj = new JSONObject(value);
+					int year=0,month=0,day=0,hour=0,minute=0;
+					boolean weekends=false,since=false;
+					int repeat=0,repeatRate=0;
+					try {
+						year = dateJsonObj.getInt("year");
+						month = dateJsonObj.getInt("month");
+						day = dateJsonObj.getInt("day");
+						hour = dateJsonObj.getInt("hour");
+						minute = dateJsonObj.getInt("minute");
+						weekends = dateJsonObj.getBoolean("weekends");
+						since = dateJsonObj.getBoolean("since");
+						repeat = dateJsonObj.getInt("repeat");
+						repeatRate = dateJsonObj.getInt("repeatRate");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 					boolean isAfterCurrentDate = checkIfAfterCurrentDate(dateJsonObj, c);
 					if (isAfterCurrentDate){
 						daysUntil.add(dateJsonObj);
-					} else {
-						daysSince.add(dateJsonObj);
+					} else { //need to check if repeats are required
+						if (since) {
+							daysSince.add(dateJsonObj);
+						} else if (repeat == 0){ //no repeat
+							//deleteFile(listFile);
+						} else if (repeat == 1){ //daily
+							//generateRepeat(repeat, c);
+						} else if (repeat == 2) { //weekly
+							//generateRepeat(repeat, c);
+						} else if (repeat == 3) { //monthly
+							//generateRepeat(repeat, c);
+						} else if (repeat == 4) { //yearly
+							do{
+								year += repeatRate;
+								dateJsonObj.put("year", year);
+							} while (!checkIfAfterCurrentDate(dateJsonObj,c));
+							daysUntil.add(dateJsonObj); //adding to daysUntil because it is now an upcoming date
+						}
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -156,7 +188,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	}
 	
 	@SuppressLint("SimpleDateFormat")
-	public boolean checkIfAfterCurrentDate(JSONObject event, Calendar c){
+	public static boolean checkIfAfterCurrentDate(JSONObject event, Calendar c){
 		int year = c.get(Calendar.YEAR);
 		int month = c.get(Calendar.MONTH);
 		int day = c.get(Calendar.DAY_OF_MONTH);
@@ -300,6 +332,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 									e.printStackTrace();
 								}
 		                	   getActivity().deleteFile(name);
+		                	   daysUntil.remove(position);
+		                	   cla.notifyDataSetChanged();
 		                	   dialog.dismiss();
 		                   }
 		               })
@@ -354,6 +388,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 									e.printStackTrace();
 								}
 		                	   getActivity().deleteFile(name);
+		                	   daysSince.remove(position);
+		                	   cla2.notifyDataSetChanged();
 		                	   dialog.dismiss();
 		                   }
 		               })
@@ -387,13 +423,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             	   for (int i = 0; i < files.length; i++){
             		   deleteFile(files[i]);
             	   }
-	           		daysUntil = new ArrayList<JSONObject>();
-	        		daysSince = new ArrayList<JSONObject>();
+              		daysUntil = new ArrayList<JSONObject>();
+            		daysSince = new ArrayList<JSONObject>();
 
-	        		//attempts to refresh fragments
-	        		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-	        		mViewPager = (ViewPager) findViewById(R.id.pager);
-	        		mViewPager.setAdapter(mSectionsPagerAdapter);
+            		//attempts to refresh fragments
+            		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+            		mViewPager = (ViewPager) findViewById(R.id.pager);
+            		mViewPager.setAdapter(mSectionsPagerAdapter);
                }
            })
            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

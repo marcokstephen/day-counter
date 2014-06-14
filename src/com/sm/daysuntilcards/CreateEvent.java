@@ -135,6 +135,7 @@ public class CreateEvent extends Activity {
 					repeatSpinner.setSelection(0); //also sets showSpinnerMessages(false)
 				} else {
 					repeatSpinner.setEnabled(true);
+					daysSinceBox = false;
 				}
 			}
 		});
@@ -190,7 +191,7 @@ public class CreateEvent extends Activity {
 						obj.put("weekends", weekbool);
 						obj.put("since", daysSinceBox);
 						obj.put("repeat", repeatSpinner.getSelectedItemPosition());
-						obj.put("repeatrate", Integer.parseInt(repeatRateEditText.getText().toString()));
+						obj.put("repeatRate", Integer.parseInt(repeatRateEditText.getText().toString()));
 						String stringDate = obj.toString();
 						FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
 						fos.write(stringDate.getBytes());
@@ -199,6 +200,13 @@ public class CreateEvent extends Activity {
 						e.printStackTrace();
 					} catch (IOException e) {
 						e.printStackTrace();
+					}
+					if (MainActivity.checkIfAfterCurrentDate(obj, c)){
+						MainActivity.daysUntil.add(obj);
+						MainActivity.cla.notifyDataSetChanged();
+					} else {
+						MainActivity.daysSince.add(obj);
+						MainActivity.cla2.notifyDataSetChanged();
 					}
 					finish();
 				}
