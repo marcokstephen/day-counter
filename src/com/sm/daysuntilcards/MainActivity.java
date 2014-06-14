@@ -33,6 +33,7 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.format.Time;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -283,6 +284,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	}
 
 	public static class UntilFragment extends ListFragment {
+		static final int FRAGMENT_GROUPID = 1;
+		static final int MENU_EDIT = 2;
+		static final int MENU_REMOVE = 3;
+		
 		public UntilFragment() {
 		}
 		@Override
@@ -290,6 +295,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			super.onActivityCreated(savedInstanceState);
 			getListView().setDivider(null);
 			getListView().setDividerHeight(0);
+			registerForContextMenu(getListView());
 			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
 				@Override
@@ -347,9 +353,29 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			cla = new CardListAdapter(getActivity(), daysUntil);
 			setListAdapter(cla);
 		}
+		
+	   @Override
+	    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+	        super.onCreateContextMenu(menu, v, menuInfo);
+	        menu.add(FRAGMENT_GROUPID, MENU_EDIT, Menu.NONE, "Edit");
+	        menu.add(FRAGMENT_GROUPID, MENU_REMOVE, Menu.NONE, "Remove");
+	        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+	    }
+	   
+	   @Override
+	   public boolean onContextItemSelected(MenuItem item){
+		   if (item.getGroupId() == FRAGMENT_GROUPID){
+			   
+		   }
+		   return false;
+	   }
 	}
 	
 	public static class SinceFragment extends ListFragment {
+		static final int FRAGMENT_GROUPID = 4;
+		static final int MENU_EDIT = 5;
+		static final int MENU_REMOVE = 6;
+		
 		public SinceFragment() {
 		}
 		@Override
