@@ -128,7 +128,7 @@ public class EditEvent extends Activity {
 				if (isChecked || !eventDate.after(currentDate)){
 					repeatSpinner.setEnabled(false);
 					repeatSpinner.setSelection(0); //also sets showSpinnerMessages(false)
-					if (!isChecked) daysSinceBox = true;
+					if (!isChecked) daysSinceBox = false;
 				} else {
 					repeatSpinner.setEnabled(true);
 					daysSinceBox = false;
@@ -203,7 +203,7 @@ public class EditEvent extends Activity {
 						obj.put("hour", hour);
 						obj.put("minute", minute);
 						obj.put("weekends", weekbool);
-						obj.put("since", daysSinceBox);
+						obj.put("since", sinceBox.isChecked());
 						obj.put("repeat", repeatSpinner.getSelectedItemPosition());
 						obj.put("repeatRate", Integer.parseInt(repeatRateText.getText().toString()));
 						String stringDate = obj.toString();

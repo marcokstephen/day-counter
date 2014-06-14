@@ -68,28 +68,32 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 					value += new String(input);
 				}
 				fis.close();
-				Log.d("OUTPUT",value);
 				try {
 					JSONObject dateJsonObj = new JSONObject(value);
 					boolean since=false;
 					String name = "";
+					int repeat = 0;
 					try {
 						name = dateJsonObj.getString("name");
 						since = dateJsonObj.getBoolean("since");
+						repeat = dateJsonObj.getInt("repeat");
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 					boolean isAfterCurrentDate = checkIfAfterCurrentDate(dateJsonObj, c);
 					if (isAfterCurrentDate){
 						daysUntil.add(dateJsonObj);
+						Log.d("OUTPUT","before current date!!");
 					} else if (since) {
 						daysSince.add(dateJsonObj);
-					} else {
+					} else if (repeat != 0){
 						dateJsonObj = addDaysToObj(dateJsonObj);
 						FileOutputStream fos = openFileOutput(name, Context.MODE_PRIVATE);
 						fos.write(dateJsonObj.toString().getBytes());
 						fos.close();
 						daysUntil.add(dateJsonObj); //adding to daysUntil because it is now an upcoming date
+					} else {
+						deleteFile(name);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
