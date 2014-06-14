@@ -2,13 +2,14 @@ package com.sm.daysuntilcards;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -16,13 +17,21 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -40,12 +49,18 @@ public class CreateEvent extends Activity {
 	static int minute = 0;
 	static SimpleDateFormat fromDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	static SimpleDateFormat toDateFormat = new SimpleDateFormat("MMM d, yyyy");
+	static SimpleDateFormat fromTimeFormat = new SimpleDateFormat("HH:mm");
+	static SimpleDateFormat toTimeFormat = new SimpleDateFormat("h:m a");
 	static Date eventDate = new Date();
+	static boolean twentyFourHourClock = false;
+	static boolean daysSinceBox = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_create_event);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		twentyFourHourClock = prefs.getBoolean("24hour",false);
 		
 		final Calendar c = Calendar.getInstance();
 		hour = c.get(Calendar.HOUR_OF_DAY);
@@ -56,7 +71,68 @@ public class CreateEvent extends Activity {
 
 		final EditText eventText = (EditText) findViewById(R.id.eventText);
 		final TextView timeView = (TextView) findViewById(R.id.timeView);
-		timeView.setText(String.format("%02d",hour)+":"+String.format("%02d",minute));
+		String fromTimeString = String.format("%02d",hour)+":"+String.format("%02d",minute);
+		String outputTimeString = fromTimeString;
+		Date eventTime = new Date();
+		if (!twentyFourHourClock){
+			try {
+				eventTime = fromTimeFormat.parse(outputTimeString);
+				outputTimeString = toTimeFormat.format(eventTime);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		final CheckBox weekBox = (CheckBox) findViewById(R.id.weekBox);
+		final TextView repeatRateView = (TextView) findViewById(R.id.repeatRateView);
+		final Spinner repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
+		ArrayAdapter<CharSequence> repeatadapter = ArrayAdapter.createFromResource(this, R.array.spinnerArray, android.R.layout.simple_spinner_item);
+		repeatadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		repeatSpinner.setAdapter(repeatadapter);
+		repeatSpinner.setOnItemSelectedListener(new OnItemSelectedListener(){
+			int repeatRate = 0;
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (position == 0){ //don't repeat
+					repeatRate = 0;
+				} else if (position == 1) {//repeat daily
+					
+				} else if (position == 2) { //repeat weekly
+					
+				} else if (position == 3) { //repeat monthly
+					
+				} else if (position == 4) { //repeat yearly
+					
+				}
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		});
+		
+		CheckBox sinceBox = (CheckBox) findViewById(R.id.sinceBox);
+		daysSinceBox = prefs.getBoolean("daysSinceDefault", false);
+		if (daysSinceBox){
+			sinceBox.setChecked(true);
+			repeatSpinner.setEnabled(false);
+			repeatRateView.setVisibility(View.INVISIBLE);
+		}
+		daysSinceBox = sinceBox.isChecked();
+		sinceBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				if (isChecked){
+					repeatSpinner.setEnabled(false);
+					repeatSpinner.setSelection(0);
+				} else {
+					repeatSpinner.setEnabled(true);
+				}
+			}
+		});
+		
+		timeView.setText(outputTimeString);
 		final TextView dateView = (TextView) findViewById(R.id.dateView);
 		String dateString = day+"/"+(month+1)+"/"+year;
 		String outputDateString = "";
@@ -81,7 +157,6 @@ public class CreateEvent extends Activity {
 			}
 		});
 		
-		final CheckBox weekBox = (CheckBox) findViewById(R.id.weekBox);
 		Button createButton = (Button) findViewById(R.id.createButton);
 		createButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v){
@@ -97,6 +172,7 @@ public class CreateEvent extends Activity {
 					obj.put("hour", hour);
 					obj.put("minute", minute);
 					obj.put("weekends", weekbool);
+					obj.put("since", daysSinceBox);
 					String stringDate = obj.toString();
 					FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
 					fos.write(stringDate.getBytes());
@@ -123,19 +199,26 @@ public class CreateEvent extends Activity {
 	public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 		@Override
 		public Dialog onCreateDialog (Bundle savedInstanceState) {
-			final Calendar c = Calendar.getInstance();
-			hour = c.get(Calendar.HOUR_OF_DAY);
-			minute = c.get(Calendar.MINUTE);
 			return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
 		}
 
 		@Override
-		public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfDay) { //we do not use these parameters
-			//we use the static ints declared at the top of the class
+		public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfDay) {
 			hour = hourOfDay;
 			minute = minuteOfDay;
 			TextView timeText = (TextView)getActivity(). findViewById(R.id.timeView);
-			timeText.setText(String.format("%02d",hour)+":"+String.format("%02d",minute));
+			String fromTimeString = String.format("%02d",hour)+":"+String.format("%02d",minute);
+			String outputTimeString = fromTimeString;
+			Date eventTime = new Date();
+			if (!twentyFourHourClock){
+				try {
+					eventTime = fromTimeFormat.parse(outputTimeString);
+					outputTimeString = toTimeFormat.format(eventTime);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+			timeText.setText(outputTimeString);
 		}
 	}
 	public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {

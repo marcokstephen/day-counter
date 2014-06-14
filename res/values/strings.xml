@@ -18,5 +18,19 @@
     <string name="delete_all">Delete All</string>
     <string name="help">Help</string>
     <string name="title_activity_help_menu">Help</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="twenty_four_hour_clock">Use 24-hour format</string>
+    <string name="twenty_four_hour_summary">1:00 PM</string>
+    <string name="events_to_since">Move to \"Days Since\" by default</string>
+    <string name="events_to_since_summary">Automatically move events to \"Days Since\" when they expire</string>
+    <string name="daysSinceBox">Move to \"Days Since\" upon expiry</string>
+    <string-array name="spinnerArray">
+        <item>Don\'t Repeat</item>
+        <item>Repeat Daily</item>
+        <item>Repeat Weekly</item>
+        <item>Repeat Monthly</item>
+        <item>Repeat Yearly</item>
+    </string-array>
+    <string name="repetition_view">Repetition:</string>
 
 </resources>

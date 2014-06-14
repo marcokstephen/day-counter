@@ -53,7 +53,8 @@
         android:layout_alignBottom="@+id/timeButton"
         android:layout_toRightOf="@+id/timeButton"
         android:text="@string/temp"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:paddingLeft="5dp" />
 
     <TextView
         android:id="@+id/dateView"
@@ -63,14 +64,52 @@
         android:layout_alignBottom="@+id/dateButton"
         android:layout_toRightOf="@+id/dateButton"
         android:text="@string/temp"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:paddingLeft="5dp" />
+
+    <CheckBox
+        android:id="@+id/sinceBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/weekBox"
+        android:layout_below="@+id/weekBox"
+        android:text="@string/daysSinceBox" />
 
     <Button
         android:id="@+id/createButton"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/weekBox"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="68dp"
         android:text="@string/create_event" />
+
+    <Spinner
+        android:id="@+id/repeatSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sinceBox"
+        android:layout_toRightOf="@+id/repetitionTextView" />
+
+    <TextView
+        android:id="@+id/repetitionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/sinceBox"
+        android:layout_alignTop="@+id/repeatSpinner"
+        android:text="@string/repetition_view"
+        android:textSize="18sp"
+        android:paddingTop="6dp"
+        android:paddingRight="2dp" />
+
+    <TextView
+        android:id="@+id/repeatRateView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/repeatSpinner"
+        android:layout_below="@+id/repeatSpinner"
+        android:text="@string/temp"
+        android:visibility="invisible"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

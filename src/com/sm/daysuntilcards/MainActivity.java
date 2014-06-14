@@ -1,9 +1,3 @@
-/*Things to do:
- * Fix layout of card
- * Refresh list automatically
- * 
- */
-
 package com.sm.daysuntilcards;
 
 import java.io.FileInputStream;
@@ -42,7 +36,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 
 public class MainActivity extends Activity implements ActionBar.TabListener {
 	SectionsPagerAdapter mSectionsPagerAdapter;
@@ -370,6 +363,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             	   }
 	           		daysUntil = new ArrayList<JSONObject>();
 	        		daysSince = new ArrayList<JSONObject>();
+
+	        		//attempts to refresh fragments
 	        		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
 	        		mViewPager = (ViewPager) findViewById(R.id.pager);
 	        		mViewPager.setAdapter(mSectionsPagerAdapter);

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <CheckBoxPreference
+        android:title="@string/twenty_four_hour_clock"
+        android:key="24hour"
+        android:defaultValue="false"
+        android:summary="@string/twenty_four_hour_summary">
+    </CheckBoxPreference>
+    <CheckBoxPreference
+        android:title="@string/events_to_since"
+        android:key="daysSinceDefault"
+        android:defaultValue="false"
+        android:summary="@string/events_to_since_summary">
+    </CheckBoxPreference>
+    
+</PreferenceScreen>
