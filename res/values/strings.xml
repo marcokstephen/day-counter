@@ -32,5 +32,6 @@
         <item>Repeat Yearly</item>
     </string-array>
     <string name="repetition_view">Repetition:</string>
+    <string name="every">Every</string>
 
 </resources>

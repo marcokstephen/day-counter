@@ -34,6 +34,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 /*
  * NOTE: Java months are off by 1 (start at 0). As such, they must be formatted as month+1, but not
@@ -50,7 +51,7 @@ public class CreateEvent extends Activity {
 	static SimpleDateFormat fromDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	static SimpleDateFormat toDateFormat = new SimpleDateFormat("MMM d, yyyy");
 	static SimpleDateFormat fromTimeFormat = new SimpleDateFormat("HH:mm");
-	static SimpleDateFormat toTimeFormat = new SimpleDateFormat("h:m a");
+	static SimpleDateFormat toTimeFormat = new SimpleDateFormat("h:mm a");
 	static Date eventDate = new Date();
 	static boolean twentyFourHourClock = false;
 	static boolean daysSinceBox = false;
@@ -84,26 +85,32 @@ public class CreateEvent extends Activity {
 		}
 		
 		final CheckBox weekBox = (CheckBox) findViewById(R.id.weekBox);
-		final TextView repeatRateView = (TextView) findViewById(R.id.repeatRateView);
+		final EditText repeatRateEditText = (EditText) findViewById(R.id.repeatRateEditText);
 		final Spinner repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
 		ArrayAdapter<CharSequence> repeatadapter = ArrayAdapter.createFromResource(this, R.array.spinnerArray, android.R.layout.simple_spinner_item);
 		repeatadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		repeatSpinner.setAdapter(repeatadapter);
 		repeatSpinner.setOnItemSelectedListener(new OnItemSelectedListener(){
-			int repeatRate = 0;
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
 				if (position == 0){ //don't repeat
-					repeatRate = 0;
-				} else if (position == 1) {//repeat daily
-					
-				} else if (position == 2) { //repeat weekly
-					
-				} else if (position == 3) { //repeat monthly
-					
-				} else if (position == 4) { //repeat yearly
-					
+					showSpinnerMessages(false);
+				} else {
+					if (position == 1){
+						TextView repeatRateView2 = (TextView) findViewById(R.id.repeatRateView2);
+						repeatRateView2.setText("days");
+					} else if (position == 2){
+						TextView repeatRateView2 = (TextView) findViewById(R.id.repeatRateView2);
+						repeatRateView2.setText("weeks");
+					} else if (position == 3) {
+						TextView repeatRateView2 = (TextView) findViewById(R.id.repeatRateView2);
+						repeatRateView2.setText("months");
+					} else {
+						TextView repeatRateView2 = (TextView) findViewById(R.id.repeatRateView2);
+						repeatRateView2.setText("years");
+					}
+					showSpinnerMessages(true);
 				}
 			}
 			@Override
@@ -116,7 +123,7 @@ public class CreateEvent extends Activity {
 		if (daysSinceBox){
 			sinceBox.setChecked(true);
 			repeatSpinner.setEnabled(false);
-			repeatRateView.setVisibility(View.INVISIBLE);
+			showSpinnerMessages(false);
 		}
 		daysSinceBox = sinceBox.isChecked();
 		sinceBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -125,7 +132,7 @@ public class CreateEvent extends Activity {
 					boolean isChecked) {
 				if (isChecked){
 					repeatSpinner.setEnabled(false);
-					repeatSpinner.setSelection(0);
+					repeatSpinner.setSelection(0); //also sets showSpinnerMessages(false)
 				} else {
 					repeatSpinner.setEnabled(true);
 				}
@@ -160,31 +167,58 @@ public class CreateEvent extends Activity {
 		Button createButton = (Button) findViewById(R.id.createButton);
 		createButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v){
-				boolean weekbool = weekBox.isChecked();
-				
-				JSONObject obj = new JSONObject();
-				try{
-					String filename = eventText.getText().toString();
-					obj.put("name", eventText.getText());
-					obj.put("day", day);
-					obj.put("month", month);
-					obj.put("year", year);
-					obj.put("hour", hour);
-					obj.put("minute", minute);
-					obj.put("weekends", weekbool);
-					obj.put("since", daysSinceBox);
-					String stringDate = obj.toString();
-					FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
-					fos.write(stringDate.getBytes());
-					fos.close();
-				} catch (JSONException e){
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
+				if (eventText.getText().toString().matches("")){
+					Toast.makeText(CreateEvent.this, "Missing event name", Toast.LENGTH_SHORT).show();
+				    return;
+				} else if (repeatSpinner.getSelectedItemPosition() != 0 &&
+						(repeatRateEditText.getText().toString().matches("") ||
+								Integer.parseInt(repeatRateEditText.getText().toString()) == 0)){
+					Toast.makeText(CreateEvent.this, "Missing repeat rate", Toast.LENGTH_SHORT).show();
+				    return;
+				} else {
+					if (repeatSpinner.getSelectedItemPosition() == 0) repeatRateEditText.setText("0");
+					boolean weekbool = weekBox.isChecked();
+					JSONObject obj = new JSONObject();
+					try{
+						String filename = eventText.getText().toString();
+						obj.put("name", eventText.getText());
+						obj.put("day", day);
+						obj.put("month", month);
+						obj.put("year", year);
+						obj.put("hour", hour);
+						obj.put("minute", minute);
+						obj.put("weekends", weekbool);
+						obj.put("since", daysSinceBox);
+						obj.put("repeat", repeatSpinner.getSelectedItemPosition());
+						obj.put("repeatrate", Integer.parseInt(repeatRateEditText.getText().toString()));
+						String stringDate = obj.toString();
+						FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
+						fos.write(stringDate.getBytes());
+						fos.close();
+					} catch (JSONException e){
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					finish();
 				}
-				finish();
 			}
 		});
+	}
+	
+	public void showSpinnerMessages(boolean show){
+		final TextView repeatRateView1 = (TextView) findViewById(R.id.repeatRateView1);
+		final TextView repeatRateView2 = (TextView) findViewById(R.id.repeatRateView2);
+		final EditText repeatRateEditText = (EditText) findViewById(R.id.repeatRateEditText);
+		if (show){
+			repeatRateView1.setVisibility(View.VISIBLE);
+			repeatRateView2.setVisibility(View.VISIBLE);
+			repeatRateEditText.setVisibility(View.VISIBLE);
+		} else {
+			repeatRateView1.setVisibility(View.INVISIBLE);
+			repeatRateView2.setVisibility(View.INVISIBLE);
+			repeatRateEditText.setVisibility(View.INVISIBLE);
+		}
 	}
 	
 	public void showTimePickerDialog(View v) {

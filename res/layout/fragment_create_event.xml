@@ -103,13 +103,33 @@
         android:paddingRight="2dp" />
 
     <TextView
-        android:id="@+id/repeatRateView"
+        android:id="@+id/repeatRateView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/repeatSpinner"
         android:layout_below="@+id/repeatSpinner"
+        android:text="@string/every"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/repeatRateEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/repeatRateView1"
+        android:layout_alignBottom="@+id/repeatRateView1"
+        android:layout_toRightOf="@+id/repeatRateView1"
+        android:ems="3"
+        android:inputType="number" >
+
+    </EditText>
+
+    <TextView
+        android:id="@+id/repeatRateView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/repeatSpinner"
+        android:layout_toRightOf="@+id/repeatRateEditText"
         android:text="@string/temp"
-        android:visibility="invisible"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>
