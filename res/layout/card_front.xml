@@ -35,6 +35,17 @@
  		    android:fontFamily="Roboto"
  		    android:text="12 days"
  		    android:textSize="40sp" />
+
+ 		<TextView
+ 		    android:id="@+id/weekendNoticeView"
+ 		    android:layout_width="wrap_content"
+ 		    android:layout_height="wrap_content"
+ 		    android:layout_alignParentBottom="true"
+ 		    android:layout_alignParentRight="true"
+ 		    android:text="@string/excludes_weekends"
+ 		    android:textColor="#B5B5B5"
+ 		    android:visibility="gone"
+ 		    android:textAppearance="?android:attr/textAppearanceSmall" />
   	    
     </RelativeLayout>
 

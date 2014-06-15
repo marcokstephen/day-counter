@@ -2,6 +2,7 @@ package com.sm.daysuntilcards;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.json.JSONException;
@@ -17,6 +18,7 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -42,6 +44,7 @@ public class DialogActivity extends Activity {
 		JSONObject jsonEvent = new JSONObject();
 		int minute=0,hour=0,day=0,month=0,year=0;
 		String name = "";
+		boolean weekends = false;
 		try {
 			jsonEvent = new JSONObject(eventString);
 			year = jsonEvent.getInt("year");
@@ -50,6 +53,7 @@ public class DialogActivity extends Activity {
 			hour = jsonEvent.getInt("hour");
 			minute = jsonEvent.getInt("minute");
 			name = jsonEvent.getString("name");
+			weekends = jsonEvent.getBoolean("weekends");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -58,6 +62,7 @@ public class DialogActivity extends Activity {
 		final int finalday=day;
 		final int finalmonth=month;
 		final int finalyear=year;
+		final boolean finalweekends=weekends;
 		
 		String fromTimeString = String.format("%02d",hour)+":"+String.format("%02d",minute);
 		String outputTimeString = fromTimeString;
@@ -103,47 +108,54 @@ public class DialogActivity extends Activity {
 		int screenHeightPercent = (int) (metrics.heightPixels * 0.80);
 		getWindow().setLayout(screenWidthPercent, screenHeightPercent);
 
-		updateTime(minute,hour,day,month,year);
+		updateTime(minute,hour,day,month,year,weekends);
 		
 		UIUpdater mUIUpdater = new UIUpdater(new Runnable() {
 	         @Override 
 	         public void run() {
-	        	 updateTime(finalmin,finalhour,finalday,finalmonth,finalyear);
+	        	 updateTime(finalmin,finalhour,finalday,finalmonth,finalyear,finalweekends);
 	         }
 	    });
 		mUIUpdater.startUpdates();
 	}
 	
-	public void updateTime(int minute,int hour,int day,int month,int year){
-		Time now = new Time();
-		now.setToNow();
-		long currentDateInMillis = now.toMillis(false);
-		now.set(0,minute,hour,day,month,year);
-		long eventDateInMillis = now.toMillis(false);
-		long difference = Math.abs(eventDateInMillis - currentDateInMillis);
-		long diffDays = difference/(1000*60*60*24);
-		long daysRemainder = difference%(1000*60*60*24);
-		long diffHours = daysRemainder/(1000*60*60);
-		long hoursRemainder = daysRemainder%(1000*60*60);
-		long diffMinutes = hoursRemainder/(1000*60);
-		long minutesRemainder = hoursRemainder%(1000*60);
-		long diffSeconds = minutesRemainder/1000;
-		TextView dialogDaysView = (TextView) findViewById(R.id.dialogDaysView);
-		TextView dialogHoursView = (TextView) findViewById(R.id.dialogHoursView);
-		TextView dialogMinutesView = (TextView) findViewById(R.id.dialogMinutesView);
-		TextView dialogSecondsView = (TextView) findViewById(R.id.dialogSecondsView);
-		String days = " days";
-		String hours = " hours";
-		String minutes = " minutes";
-		String seconds = " seconds";
-		if (diffDays == 1) days = " day";
-		if (diffHours == 1) hours = " hour";
-		if (diffMinutes == 1) minutes = " minute";
-		if (diffSeconds == 1) seconds = " second";
-		dialogDaysView.setText(diffDays+days);
-		dialogHoursView.setText(diffHours+hours);
-		dialogMinutesView.setText(diffMinutes+minutes);
-		dialogSecondsView.setText(diffSeconds+seconds);
+	public void updateTime(int minute,int hour,int day,int month,int year,boolean weekends){
+		long difference = 0;
+		if (!weekends){
+			Time now = new Time();
+			now.setToNow();
+			long currentDateInMillis = now.toMillis(false);
+			now.set(0,minute,hour,day,month,year);
+			long eventDateInMillis = now.toMillis(false);
+			difference = Math.abs(eventDateInMillis - currentDateInMillis);
+		} else {
+			difference = CardListAdapter.getNoWeekendsDifference(year, month, day, hour, minute);
+			TextView excludesWeekendsDialogView = (TextView) findViewById(R.id.excludesWeekendsDialogView);
+			excludesWeekendsDialogView.setVisibility(View.VISIBLE);
+		}
+			long diffDays = difference/(1000*60*60*24);
+			long daysRemainder = difference%(1000*60*60*24);
+			long diffHours = daysRemainder/(1000*60*60);
+			long hoursRemainder = daysRemainder%(1000*60*60);
+			long diffMinutes = hoursRemainder/(1000*60);
+			long minutesRemainder = hoursRemainder%(1000*60);
+			long diffSeconds = minutesRemainder/1000;
+			TextView dialogDaysView = (TextView) findViewById(R.id.dialogDaysView);
+			TextView dialogHoursView = (TextView) findViewById(R.id.dialogHoursView);
+			TextView dialogMinutesView = (TextView) findViewById(R.id.dialogMinutesView);
+			TextView dialogSecondsView = (TextView) findViewById(R.id.dialogSecondsView);
+			String days = " days";
+			String hours = " hours";
+			String minutes = " minutes";
+			String seconds = " seconds";
+			if (diffDays == 1) days = " day";
+			if (diffHours == 1) hours = " hour";
+			if (diffMinutes == 1) minutes = " minute";
+			if (diffSeconds == 1) seconds = " second";
+			dialogDaysView.setText(diffDays+days);
+			dialogHoursView.setText(diffHours+hours);
+			dialogMinutesView.setText(diffMinutes+minutes);
+			dialogSecondsView.setText(diffSeconds+seconds);
 	}
 	
 	public class UIUpdater{

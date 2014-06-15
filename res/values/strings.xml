@@ -42,5 +42,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_detail_pane">DetailPane</string>
     <string name="title_activity_dialog">DialogActivity</string>
+    <string name="notice_weekends_setting">Show weekends notice</string>
+    <string name="notice_weekends_summary">Show notice on cards that are not counting weekends</string>
+    <string name="excludes_weekends">excludes weekends</string>
 
 </resources>

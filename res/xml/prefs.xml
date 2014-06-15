@@ -12,5 +12,11 @@
         android:defaultValue="false"
         android:summary="@string/events_to_since_summary">
     </CheckBoxPreference>
+    <CheckBoxPreference
+   		android:title="@string/notice_weekends_setting"
+   		android:key="showWeekendNotice"
+   		android:defaultValue="true"
+   		android:summary="@string/notice_weekends_summary" >
+    </CheckBoxPreference>
     
 </PreferenceScreen>

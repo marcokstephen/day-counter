@@ -1,13 +1,14 @@
 package com.sm.daysuntilcards;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +20,12 @@ public class CardListAdapter extends BaseAdapter{
 	
 	private List<JSONObject> eventJsonList;
 	private LayoutInflater myInflater;
+	private Context context;
 	
 	public CardListAdapter(Context c, List<JSONObject> eventList){
 		eventJsonList = eventList;
 		myInflater = (LayoutInflater)c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		context = c;
 	}
 
 	@Override
@@ -66,7 +69,68 @@ public class CardListAdapter extends BaseAdapter{
 		if (!weekends){ //count weekends
 			long eventDateInMs = now.toMillis(false);
 			difference = Math.abs(currentDateInMs-eventDateInMs);
-		} else if (currentDateInMs < now.toMillis(false)) { //do not count weekends, only for daysUntil
+		} else {
+			difference = getNoWeekendsDifference(year,month,day,hour,minute);
+		}
+		differenceDays = difference/(1000*60*60*24);
+		
+		if (differenceDays == 1){
+			timeRemaining = differenceDays + " day";
+		} else {
+			timeRemaining = differenceDays + " days";
+		}
+		
+		//if differenceDays == 0, timescale is down to hours
+		if (differenceDays == 0){
+			differenceDays = difference/(1000*60*60);
+			if (differenceDays == 1){
+				timeRemaining = differenceDays + " hour";
+			} else {
+				timeRemaining = differenceDays + " hours";
+			}
+		}
+		
+		//if differenceDays == 0, timescale is down to minutes
+		if (differenceDays == 0){
+			differenceDays = difference/(1000*60);
+			if (differenceDays == 1){
+				timeRemaining = differenceDays + " minute";
+			} else {
+				timeRemaining = differenceDays+ " minutes";
+			}
+		}
+		
+		ViewHolder holder = null;
+		if (convertView == null){
+			convertView = myInflater.inflate(R.layout.card_front, null);
+			holder = new ViewHolder();
+			holder.title= (TextView) convertView.findViewById(R.id.eventNameView);
+			holder.count = (TextView) convertView.findViewById(R.id.daysView);
+			holder.weekend = (TextView) convertView.findViewById(R.id.weekendNoticeView);
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		Boolean showWeekendNotice = prefs.getBoolean("showWeekendNotice", true);
+		holder.title.setText(title);
+		holder.count.setText(timeRemaining);
+		if (weekends && showWeekendNotice){
+			holder.weekend.setVisibility(View.VISIBLE);
+		} else {
+			holder.weekend.setVisibility(View.GONE);
+		}
+		return convertView;
+	}
+	
+	public static long getNoWeekendsDifference(int year,int month,int day,int hour,int minute){
+		long difference = 0;
+		Time now = new Time();
+		now.setToNow();
+		long currentDateInMs = now.toMillis(false);
+		now.set(0,minute,hour,day,month,year); //setting "now" to the event date
+		if (currentDateInMs < now.toMillis(false)) { //do not count weekends, only for daysUntil
 			//only works for days until so far
 			difference = 0;
 			Calendar currentDate = Calendar.getInstance();
@@ -140,41 +204,14 @@ public class CardListAdapter extends BaseAdapter{
 				}
 			}
 		}
-		differenceDays = difference/(1000*60*60*24);
-		
-		if (differenceDays == 1){
-			timeRemaining = differenceDays + " day";
-		} else {
-			timeRemaining = differenceDays + " days";
-		}
-		
-		//if differenceDays == 0, timescale is down to hours
-		if (differenceDays == 0){
-			differenceDays = difference/(1000*60*60);
-			if (differenceDays == 1){
-				timeRemaining = differenceDays + " hour";
-			} else {
-				timeRemaining = differenceDays + " hours";
-			}
-		}
-		
-		//if differenceDays == 0, timescale is down to minutes
-		if (differenceDays == 0){
-			differenceDays = difference/(1000*60);
-			if (differenceDays == 1){
-				timeRemaining = differenceDays + " minute";
-			} else {
-				timeRemaining = differenceDays+ " minutes";
-			}
-		}
-		
-		if (convertView == null){
-			convertView = myInflater.inflate(R.layout.card_front, null);
-		}
-		TextView cardTextView = (TextView)convertView.findViewById(R.id.eventNameView);
-		cardTextView.setText(title);
-		TextView daysView = (TextView)convertView.findViewById(R.id.daysView);
-		daysView.setText(timeRemaining);
-		return convertView;
+		return difference;
+	}
+	
+	static class ViewHolder {
+		//used to prevent bug from occurring when android os reuses the listview card views
+	  TextView title;
+	  TextView count;
+	  TextView weekend;
+	  int position;
 	}
 }
