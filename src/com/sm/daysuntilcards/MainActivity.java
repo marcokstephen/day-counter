@@ -374,10 +374,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
 					// TODO Auto-generated method stub
-					FragmentManager manager=getFragmentManager();
-					CountdownDialog cd = CountdownDialog.newInstance(daysSince.get(position).toString());
-					//CountdownDialog cd = new CountdownDialog();
-					cd.show(manager, "MyDialog");
+					Intent intent = new Intent(getActivity(), DialogActivity.class);
+					startActivity(intent);
 				}
 			});
 		}

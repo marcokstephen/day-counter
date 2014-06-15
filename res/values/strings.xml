@@ -41,5 +41,6 @@
     <string name="title_activity_edit_event">Edit Event</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_detail_pane">DetailPane</string>
+    <string name="title_activity_dialog">DialogActivity</string>
 
 </resources>
