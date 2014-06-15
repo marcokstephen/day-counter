@@ -1,8 +1,76 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="match_parent"
+   android:layout_height="wrap_content"
     android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.sm.daysuntilcards.DialogActivity"
-    tools:ignore="MergeRootFrame" />
+    android:padding="5dp" >
+
+    <TextView
+        android:id="@+id/dialogNameView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/temp"
+        android:fontFamily="Roboto"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/dialogDateView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialogNameView"
+        android:layout_centerHorizontal="true"
+        android:text="@string/temp"
+        android:fontFamily="Roboto"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/dialogTimeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialogDateView"
+        android:layout_centerHorizontal="true"
+        android:text="@string/temp"
+        android:textSize="25sp"
+        android:fontFamily="Roboto" />
+
+    <TextView
+        android:id="@+id/dialogDaysView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialogTimeView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="54dp"
+        android:text="@string/temp"
+        android:textSize="48sp" />
+
+    <TextView
+        android:id="@+id/dialogHoursView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/dialogDaysView"
+        android:text="@string/temp"
+        android:textSize="34sp" />
+
+    <TextView
+        android:id="@+id/dialogMinutesView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/dialogHoursView"
+        android:text="@string/temp"
+        android:textSize="28sp" />
+
+    <TextView
+        android:id="@+id/dialogSecondsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/dialogMinutesView"
+        android:text="@string/temp"
+        android:textSize="24sp" />
+
+</RelativeLayout>
 

@@ -305,11 +305,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
-					// TODO Auto-generated method stub
-					TextView test = (TextView) view.findViewById(R.id.eventNameView);
-					String toasttest = test.getText().toString();
-					Toast.makeText(getActivity(), toasttest,
-		                    Toast.LENGTH_LONG).show();
+					Intent intent = new Intent(getActivity(), DialogActivity.class);
+					intent.putExtra("com.sm.daysuntilcards.JSONSTRING", daysUntil.get(position).toString());
+					startActivity(intent);
 				}
 			});
 		}
@@ -373,8 +371,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
-					// TODO Auto-generated method stub
 					Intent intent = new Intent(getActivity(), DialogActivity.class);
+					intent.putExtra("com.sm.daysuntilcards.JSONSTRING", daysSince.get(position).toString());
 					startActivity(intent);
 				}
 			});
