@@ -1,19 +1,18 @@
 package com.sm.daysuntilcards;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 public class CardListAdapter extends BaseAdapter{
@@ -47,7 +46,8 @@ public class CardListAdapter extends BaseAdapter{
 		int year=0,month=0,day=0,hour=0,minute=0;
 		String title = "placeholder";
 		String timeRemaining = "";
-		long differenceDays = 0;
+		boolean weekends = false;
+		long differenceDays = 0; long difference = 0;
 		try {
 			year = event.getInt("year");
 			month = event.getInt("month");
@@ -55,42 +55,83 @@ public class CardListAdapter extends BaseAdapter{
 			hour = event.getInt("hour");
 			minute = event.getInt("minute");
 			title = event.getString("name");
-			Time now = new Time();
-			now.setToNow();
-			long currentDateInMs = now.toMillis(false);
-			now.set(0,minute,hour,day,month,year);
-			long eventDateInMs = now.toMillis(false);
-			long difference = Math.abs(currentDateInMs-eventDateInMs);
-			differenceDays = difference/(1000*60*60*24);
-			
-			if (differenceDays == 1){
-				timeRemaining = differenceDays + " day";
-			} else {
-				timeRemaining = differenceDays + " days";
-			}
-			
-			//if differenceDays == 0, timescale is down to hours
-			if (differenceDays == 0){
-				differenceDays = difference/(1000*60*60);
-				if (differenceDays == 1){
-					timeRemaining = differenceDays + " hour";
-				} else {
-					timeRemaining = differenceDays + " hours";
-				}
-			}
-			
-			//if differenceDays == 0, timescale is down to minutes
-			if (differenceDays == 0){
-				differenceDays = difference/(1000*60);
-				if (differenceDays == 1){
-					timeRemaining = differenceDays + " minute";
-				} else {
-					timeRemaining = differenceDays+ " minutes";
-				}
-			}
-			
+			weekends = event.getBoolean("weekends");
 		} catch (JSONException e) {
 			e.printStackTrace();
+		}
+		Time now = new Time();
+		now.setToNow();
+		long currentDateInMs = now.toMillis(false);
+		now.set(0,minute,hour,day,month,year); //setting "now" to the event date
+		if (!weekends){ //count weekends
+			long eventDateInMs = now.toMillis(false);
+			difference = Math.abs(currentDateInMs-eventDateInMs);
+		} else { //do not count weekends
+			//only works for days until so far
+			difference = 0;
+			Calendar currentDate = Calendar.getInstance();
+			Calendar eventDate = Calendar.getInstance();
+			eventDate.set(year, month, day, hour, minute, 00);
+			if (currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
+				currentDate.add(Calendar.DATE, 1);
+				currentDate.set(currentDate.get(Calendar.YEAR),currentDate.get(Calendar.MONTH),currentDate.get(Calendar.DATE),0,0,0);
+			} else if (currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
+				currentDate.add(Calendar.DATE, 2);
+				currentDate.set(currentDate.get(Calendar.YEAR),currentDate.get(Calendar.MONTH),currentDate.get(Calendar.DATE),0,0,0);
+			}
+
+			if (eventDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
+				eventDate.add(Calendar.DATE, -2);
+				eventDate.set(eventDate.get(Calendar.YEAR),eventDate.get(Calendar.MONTH),eventDate.get(Calendar.DATE),23,59,59);
+			} else if (eventDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
+				eventDate.add(Calendar.DATE, -1);
+				eventDate.set(eventDate.get(Calendar.YEAR),eventDate.get(Calendar.MONTH),eventDate.get(Calendar.DATE),23,59,59);
+			}
+
+			if ((currentDate.get(Calendar.WEEK_OF_YEAR) == eventDate.get(Calendar.WEEK_OF_YEAR)) &&
+					(currentDate.get(Calendar.YEAR) == eventDate.get(Calendar.YEAR))){
+				difference = Math.abs(eventDate.getTimeInMillis()-currentDate.getTimeInMillis());
+			} else {
+				boolean makeLastSubtraction = true;
+				while (currentDate.before(eventDate)){
+					difference += 432000000; //millisPerWorkWeek
+					currentDate.add(Calendar.DATE, 7);
+					if ((currentDate.get(Calendar.WEEK_OF_YEAR) == eventDate.get(Calendar.WEEK_OF_YEAR)) &&
+							(currentDate.get(Calendar.YEAR) == eventDate.get(Calendar.YEAR))){
+						difference += Math.abs(eventDate.getTimeInMillis()-currentDate.getTimeInMillis());
+						makeLastSubtraction = false;
+						break;
+					}
+				}
+				if (makeLastSubtraction) difference -= Math.abs(currentDate.getTimeInMillis()-eventDate.getTimeInMillis());
+			}
+		}
+		differenceDays = difference/(1000*60*60*24);
+		
+		if (differenceDays == 1){
+			timeRemaining = differenceDays + " day";
+		} else {
+			timeRemaining = differenceDays + " days";
+		}
+		
+		//if differenceDays == 0, timescale is down to hours
+		if (differenceDays == 0){
+			differenceDays = difference/(1000*60*60);
+			if (differenceDays == 1){
+				timeRemaining = differenceDays + " hour";
+			} else {
+				timeRemaining = differenceDays + " hours";
+			}
+		}
+		
+		//if differenceDays == 0, timescale is down to minutes
+		if (differenceDays == 0){
+			differenceDays = difference/(1000*60);
+			if (differenceDays == 1){
+				timeRemaining = differenceDays + " minute";
+			} else {
+				timeRemaining = differenceDays+ " minutes";
+			}
 		}
 		
 		if (convertView == null){
