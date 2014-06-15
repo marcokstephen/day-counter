@@ -184,12 +184,13 @@ public class CreateEvent extends Activity {
 					Toast.makeText(CreateEvent.this, "Missing repeat rate", Toast.LENGTH_SHORT).show();
 				    return;
 				} else {
+					String eventName = eventText.getText().toString().replaceAll("/", "-"); //fix linux naming bug (canont contain "/")
 					if (repeatSpinner.getSelectedItemPosition() == 0) repeatRateEditText.setText("0");
 					boolean weekbool = weekBox.isChecked();
 					JSONObject obj = new JSONObject();
 					try{
-						String filename = eventText.getText().toString();
-						obj.put("name", eventText.getText());
+						String filename = eventName;
+						obj.put("name", eventName);
 						obj.put("day", day);
 						obj.put("month", month);
 						obj.put("year", year);
@@ -207,13 +208,6 @@ public class CreateEvent extends Activity {
 						e.printStackTrace();
 					} catch (IOException e) {
 						e.printStackTrace();
-					}
-					if (MainActivity.checkIfAfterCurrentDate(obj, c)){
-						MainActivity.daysUntil.add(obj);
-						MainActivity.cla.notifyDataSetChanged();
-					} else {
-						MainActivity.daysSince.add(obj);
-						MainActivity.cla2.notifyDataSetChanged();
 					}
 					finish();
 				}

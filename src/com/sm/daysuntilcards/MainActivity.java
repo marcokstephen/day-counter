@@ -37,6 +37,7 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -46,7 +47,7 @@ import android.widget.Toast;
 
 @SuppressLint("SimpleDateFormat")
 public class MainActivity extends Activity implements ActionBar.TabListener {
-	SectionsPagerAdapter mSectionsPagerAdapter;
+	static SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
 	public static List<JSONObject> daysUntil;
 	public static List<JSONObject> daysSince;
@@ -56,89 +57,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		daysUntil = new ArrayList<JSONObject>();
-		daysSince = new ArrayList<JSONObject>();
-		Calendar c = Calendar.getInstance();
-		
-		FileInputStream fis;
-		try {
-			String[] file = fileList();
-			for (int i = 0; i < file.length; i++){
-				String listFile = file[i];
-				String value = "";
-				fis = openFileInput(listFile);
-				byte[] input = new byte[fis.available()];
-				while(fis.read(input) != -1){
-					value += new String(input);
-				}
-				fis.close();
-				try {
-					JSONObject dateJsonObj = new JSONObject(value);
-					boolean since=false;
-					String name = "";
-					int repeat = 0;
-					try {
-						name = dateJsonObj.getString("name");
-						since = dateJsonObj.getBoolean("since");
-						repeat = dateJsonObj.getInt("repeat");
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-					boolean isAfterCurrentDate = checkIfAfterCurrentDate(dateJsonObj, c);
-					if (isAfterCurrentDate){
-						daysUntil.add(dateJsonObj);
-					} else if (since) {
-						daysSince.add(dateJsonObj);
-					} else if (repeat != 0){
-						dateJsonObj = addDaysToObj(dateJsonObj);
-						FileOutputStream fos = openFileOutput(name, Context.MODE_PRIVATE);
-						fos.write(dateJsonObj.toString().getBytes());
-						fos.close();
-						daysUntil.add(dateJsonObj); //adding to daysUntil because it is now an upcoming date
-					} else {
-						deleteFile(name);
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		Collections.sort(daysUntil, new Comparator<JSONObject>() {
-			public int compare(JSONObject event1, JSONObject event2){
-				long event1ms = eventToMs(event1);
-				long event2ms = eventToMs(event2);
-				if (event1ms < event2ms) return -1;
-				return 1;
-			}
-		});
-		Collections.sort(daysSince, new Comparator<JSONObject>() {
-			public int compare(JSONObject event1, JSONObject event2){
-				long event1ms = eventToMs(event1);
-				long event2ms = eventToMs(event2);
-				if (event1ms > event2ms) return -1;
-				return 1;
-			}
-		});
-		
 		setContentView(R.layout.activity_main);
-
-		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-		// Create the adapter that will return a fragment for each of the two
-		// primary sections of the activity.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-
-		// Set up the ViewPager with the sections adapter.
-		mViewPager = (ViewPager) findViewById(R.id.pager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
+		refreshListFragments(this);
 
 		mViewPager
 				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -147,13 +69,30 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 						actionBar.setSelectedNavigationItem(position);
 					}
 				});
-
+		
 		// For each of the sections in the app, add a tab to the action bar.
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
 			actionBar.addTab(actionBar.newTab()
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+	}
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
+		refreshListFragments(this);
+	}
+	
+	public void refreshListFragments(Context c){
+		generateLists(this);
+		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mViewPager.setAdapter(mSectionsPagerAdapter);
+		final ActionBar actionBar = getActionBar();
+		int page = actionBar.getSelectedNavigationIndex();
+		mViewPager.setCurrentItem(page);
+		Log.d("FRAGMENT","Refreshed!");
 	}
 	
 	public static long eventToMs (JSONObject event){
@@ -262,8 +201,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		@Override
 		public Fragment getItem(int position) {
 			if (position == 0){
+				Log.d("FRAGMENT","Requesting new UNTIL fragment");
 				return new UntilFragment();
 			} else {
+				Log.d("FRAGMENT","Requesting new SINCE fragment");
 				return new SinceFragment();
 			}
 		}
@@ -495,5 +436,80 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			e.printStackTrace();
 		}
 		return dateJsonObj;
+	}
+	
+	public static void sortList(List<JSONObject> eventList, final boolean daysUntil){
+		//if list is daysuntil, value is true, if list is dayssince, value is false
+		Collections.sort(eventList, new Comparator<JSONObject>() {
+			public int compare(JSONObject event1, JSONObject event2){
+				long event1ms = eventToMs(event1);
+				long event2ms = eventToMs(event2);
+				if (daysUntil){
+					if (event1ms < event2ms) return -1;
+				} else {
+					if (event1ms > event2ms) return -1;
+				}
+				return 1;
+			}
+		});
+	}
+	
+	public static void generateLists(Context context){
+		Log.d("FRAGMENT","generating new lists");
+		daysUntil = new ArrayList<JSONObject>();
+		daysSince = new ArrayList<JSONObject>();
+		Calendar c = Calendar.getInstance();
+		
+		FileInputStream fis;
+		try {
+			String[] file = context.fileList();
+			for (int i = 0; i < file.length; i++){
+				String listFile = file[i];
+				String value = "";
+				fis = context.openFileInput(listFile);
+				byte[] input = new byte[fis.available()];
+				while(fis.read(input) != -1){
+					value += new String(input);
+				}
+				fis.close();
+				try {
+					JSONObject dateJsonObj = new JSONObject(value);
+					boolean since=false;
+					String name = "";
+					int repeat = 0;
+					try {
+						name = dateJsonObj.getString("name");
+						since = dateJsonObj.getBoolean("since");
+						repeat = dateJsonObj.getInt("repeat");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					boolean isAfterCurrentDate = checkIfAfterCurrentDate(dateJsonObj, c);
+					if (isAfterCurrentDate){
+						daysUntil.add(dateJsonObj);
+					} else if (since) {
+						daysSince.add(dateJsonObj);
+					} else if (repeat != 0){
+						dateJsonObj = addDaysToObj(dateJsonObj);
+						FileOutputStream fos = context.openFileOutput(name, Context.MODE_PRIVATE);
+						fos.write(dateJsonObj.toString().getBytes());
+						fos.close();
+						daysUntil.add(dateJsonObj); //adding to daysUntil because it is now an upcoming date
+					} else {
+						context.deleteFile(name);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		sortList(daysUntil, true);
+		sortList(daysSince, false);
+		
 	}
 }

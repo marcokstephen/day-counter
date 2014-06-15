@@ -15,7 +15,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:ems="10"
-        android:hint="@string/event_name" >
+        android:hint="@string/event_name"
+        android:maxLength="30" >
         
     </EditText>
 
@@ -26,7 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/dateButton"
         android:layout_below="@+id/dateButton"
-        android:text="@string/change_time" />
+        android:text="@string/change_time"
+         />
 
     <Button
         android:id="@+id/dateButton"
