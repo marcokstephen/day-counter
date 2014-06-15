@@ -39,7 +39,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 @SuppressLint("SimpleDateFormat")
 public class MainActivity extends Activity implements ActionBar.TabListener {
@@ -85,7 +88,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 					boolean isAfterCurrentDate = checkIfAfterCurrentDate(dateJsonObj, c);
 					if (isAfterCurrentDate){
 						daysUntil.add(dateJsonObj);
-						Log.d("OUTPUT","before current date!!");
 					} else if (since) {
 						daysSince.add(dateJsonObj);
 					} else if (repeat != 0){
@@ -299,6 +301,17 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			registerForContextMenu(getListView());
 			cla = new CardListAdapter(getActivity(), daysUntil);
 			setListAdapter(cla);
+			getListView().setOnItemClickListener(new OnItemClickListener(){
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					// TODO Auto-generated method stub
+					TextView test = (TextView) view.findViewById(R.id.eventNameView);
+					String toasttest = test.getText().toString();
+					Toast.makeText(getActivity(), toasttest,
+		                    Toast.LENGTH_LONG).show();
+				}
+			});
 		}
 		
 	   @Override
@@ -306,7 +319,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	        super.onCreateContextMenu(menu, v, menuInfo);
 	        menu.add(FRAGMENT_GROUPID, MENU_EDIT, Menu.NONE, "Edit");
 	        menu.add(FRAGMENT_GROUPID, MENU_REMOVE, Menu.NONE, "Remove");
-	        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
 	    }
 	   
 	   @Override
@@ -357,6 +369,14 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			registerForContextMenu(getListView());
 			cla2 = new CardListAdapter(getActivity(), daysSince);
 			setListAdapter(cla2);
+			getListView().setOnItemClickListener(new OnItemClickListener(){
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 		}
 		
 		@Override
@@ -364,7 +384,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	        super.onCreateContextMenu(menu, v, menuInfo);
 	        menu.add(FRAGMENT_GROUPID, MENU_EDIT, Menu.NONE, "Edit");
 	        menu.add(FRAGMENT_GROUPID, MENU_REMOVE, Menu.NONE, "Remove");
-	        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
 	    }
 	   
 	   @Override
@@ -372,36 +391,32 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		   if (item.getGroupId() == FRAGMENT_GROUPID){
 			   AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 			   int position = info.position;
-				switch (item.getItemId()){
-				case MENU_EDIT:
-					Intent intent = new Intent(getActivity(), EditEvent.class);
-					intent.putExtra("com.sm.daysuntilcards.EVENT", daysSince.get(position).toString());
-					intent.putExtra("com.sm.daysuntilcards.POSITION", position);
-					intent.putExtra("com.sm.daysuntilcards.UNTIL", false);
-					startActivity(intent);
-					return false;
-				case MENU_REMOVE:
-					String name = "temp";
-						try {
-						name = daysSince.get(position).getString("name");
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
+			   switch (item.getItemId()){
+			   case MENU_EDIT:
+				   Intent intent = new Intent(getActivity(), EditEvent.class);
+				   intent.putExtra("com.sm.daysuntilcards.EVENT", daysSince.get(position).toString());
+				   intent.putExtra("com.sm.daysuntilcards.POSITION", position);
+				   intent.putExtra("com.sm.daysuntilcards.UNTIL", false);
+				   startActivity(intent);
+				   return false;
+			   case MENU_REMOVE:
+				   String name = "temp";
+				   try {
+					   name = daysSince.get(position).getString("name");
+				   } catch (JSONException e) {
+					   e.printStackTrace();
+				   }
 	        	   getActivity().deleteFile(name);
 	        	   daysSince.remove(position);
 	        	   cla2.notifyDataSetChanged();
 	        	   return false;
-				default:
-					return super.onContextItemSelected(item);
-				}
+			   default:
+				   return super.onContextItemSelected(item);
+			   }
 		   }
 		   return false;
 	   }
-	}
-	
-	public static class DetailedFragment extends Fragment {
-		
-	}
+   }
 	
 	public void promptToDeleteAll(){
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
