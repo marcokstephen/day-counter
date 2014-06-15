@@ -132,7 +132,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-		// Create the adapter that will return a fragment for each of the three
+		// Create the adapter that will return a fragment for each of the two
 		// primary sections of the activity.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
 
@@ -374,7 +374,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
 					// TODO Auto-generated method stub
-					
+					FragmentManager manager=getFragmentManager();
+					CountdownDialog cd = CountdownDialog.newInstance(daysSince.get(position).toString());
+					//CountdownDialog cd = new CountdownDialog();
+					cd.show(manager, "MyDialog");
 				}
 			});
 		}
