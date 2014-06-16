@@ -1,28 +1,63 @@
 package com.sm.daysuntilcards;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
-import android.graphics.Color;
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.app.ListFragment;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.text.format.Time;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 
 @SuppressLint("SimpleDateFormat")
-public class MainActivity extends Activity {//implements ActionBar.TabListener {
-	/*static SectionsPagerAdapter mSectionsPagerAdapter;
+public class MainActivity extends Activity implements ActionBar.TabListener {
+	static SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
 	public static List<JSONObject> daysUntil;
 	public static List<JSONObject> daysSince;
 	public static CardListAdapter cla;
-	public static CardListAdapter cla2;*/
+	public static CardListAdapter cla2;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		DrawCalendar drawCalendar = new DrawCalendar(this, "Jan", 5);
+		/*DrawCalendar drawCalendar = new DrawCalendar(this, "Jan", 5);
 		drawCalendar.setBackgroundColor(Color.WHITE);
-		setContentView(drawCalendar);
-	}
-}
-		/*setContentView(R.layout.activity_main);
+		setContentView(drawCalendar);*/
+	
+		setContentView(R.layout.activity_main);
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		refreshListFragments(this);
@@ -373,6 +408,7 @@ public class MainActivity extends Activity {//implements ActionBar.TabListener {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		
 		if (repeat == 1){ //daily
 			do{
 				c.add(Calendar.DATE, repeatRate);
@@ -475,7 +511,5 @@ public class MainActivity extends Activity {//implements ActionBar.TabListener {
 		
 		sortList(daysUntil, true);
 		sortList(daysSince, false);
-		
 	}
 }
-*/

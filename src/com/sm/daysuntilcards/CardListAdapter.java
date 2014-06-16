@@ -108,6 +108,7 @@ public class CardListAdapter extends BaseAdapter{
 			holder.title= (TextView) convertView.findViewById(R.id.eventNameView);
 			holder.count = (TextView) convertView.findViewById(R.id.daysView);
 			holder.weekend = (TextView) convertView.findViewById(R.id.weekendNoticeView);
+			holder.dc = (DrawCalendar) convertView.findViewById(R.id.calendarIcon);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -118,6 +119,8 @@ public class CardListAdapter extends BaseAdapter{
 		
 		holder.title.setText(title);
 		holder.count.setText(timeRemaining);
+		DrawCalendar newcal = new DrawCalendar(context);
+		holder.dc = newcal;
 		if (weekends && showWeekendNotice){
 			holder.weekend.setVisibility(View.VISIBLE);
 		} else {
@@ -215,5 +218,6 @@ public class CardListAdapter extends BaseAdapter{
 	  TextView count;
 	  TextView weekend;
 	  int position;
+	  DrawCalendar dc;
 	}
 }

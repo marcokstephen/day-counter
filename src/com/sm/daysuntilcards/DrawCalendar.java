@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
@@ -13,15 +14,24 @@ public class DrawCalendar extends View {
 	private String monthName;
 	private int dayNumber;
 	
-	public DrawCalendar(Context context, String month, int day) {
+	public DrawCalendar(Context context) {
 		super(context);
-		monthName = month;
-		dayNumber = day;
+		//monthName = month;
+		//dayNumber = day;
 	}
 	
-	@Override
+	public DrawCalendar(Context context, AttributeSet attrs){
+		super(context,attrs);
+	}
+	
+	public DrawCalendar(Context context, AttributeSet attrs, int defStyle){
+		super(context, attrs, defStyle);
+	}
+	
 	public void onDraw(Canvas canvas){
-		RectF rectf = new RectF(20,0,800,800);
+		int canvasSize = canvas.getWidth()
+		Log.d("CAN",canvas.getWidth()+"");
+		/*RectF rectf = new RectF(20,0,800,800);
 		paint.setStrokeWidth(3);
 		paint.setColor(Color.parseColor("#dddddd"));
 		canvas.drawRoundRect(rectf, 88, 88, paint);
@@ -36,6 +46,9 @@ public class DrawCalendar extends View {
 		}
 		paint.setTextSize(220);
 		paint.setColor(Color.WHITE);
-		canvas.drawText(monthName, 230, 185, paint);
+		canvas.drawText(monthName, 230, 185, paint);*/
+		paint.setColor(Color.BLACK);
+		RectF rectf = new RectF(0,0,250,250);
+		canvas.drawRect(rectf, paint);
 	}
 }
