@@ -58,6 +58,7 @@ public class CardListAdapter extends BaseAdapter{
 			hour = event.getInt("hour");
 			minute = event.getInt("minute");
 			title = event.getString("name");
+			title = title.replaceAll("PARSE", "/");
 			weekends = event.getBoolean("weekends");
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -114,6 +115,7 @@ public class CardListAdapter extends BaseAdapter{
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		Boolean showWeekendNotice = prefs.getBoolean("showWeekendNotice", true);
+		
 		holder.title.setText(title);
 		holder.count.setText(timeRemaining);
 		if (weekends && showWeekendNotice){

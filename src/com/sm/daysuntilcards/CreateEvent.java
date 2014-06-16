@@ -184,7 +184,7 @@ public class CreateEvent extends Activity {
 					Toast.makeText(CreateEvent.this, "Missing repeat rate", Toast.LENGTH_SHORT).show();
 				    return;
 				} else {
-					String eventName = eventText.getText().toString().replaceAll("/", "-"); //fix linux naming bug (canont contain "/")
+					String eventName = eventText.getText().toString().replaceAll("/", "PARSE"); //fix linux naming bug (canont contain "/")
 					if (repeatSpinner.getSelectedItemPosition() == 0) repeatRateEditText.setText("0");
 					boolean weekbool = weekBox.isChecked();
 					JSONObject obj = new JSONObject();

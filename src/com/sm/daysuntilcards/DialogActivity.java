@@ -53,6 +53,7 @@ public class DialogActivity extends Activity {
 			hour = jsonEvent.getInt("hour");
 			minute = jsonEvent.getInt("minute");
 			name = jsonEvent.getString("name");
+			name = name.replaceAll("PARSE","/");
 			weekends = jsonEvent.getBoolean("weekends");
 		} catch (JSONException e) {
 			e.printStackTrace();
