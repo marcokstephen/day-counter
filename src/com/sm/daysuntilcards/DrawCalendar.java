@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 
 public class DrawCalendar extends View {
@@ -28,10 +29,11 @@ public class DrawCalendar extends View {
 		super(context, attrs, defStyle);
 	}
 	
+	@SuppressWarnings("unused")
 	public void onDraw(Canvas canvas){
-		int canvasSize = canvas.getWidth()
+		/*int canvasSize = canvas.getWidth();
 		Log.d("CAN",canvas.getWidth()+"");
-		/*RectF rectf = new RectF(20,0,800,800);
+		RectF rectf = new RectF(20,0,800,800);
 		paint.setStrokeWidth(3);
 		paint.setColor(Color.parseColor("#dddddd"));
 		canvas.drawRoundRect(rectf, 88, 88, paint);
@@ -39,16 +41,13 @@ public class DrawCalendar extends View {
 		paint.setColor(Color.parseColor("#ff7070"));
 		canvas.drawRoundRect(rectf,88,88,paint);
 		paint.setTextSize(450);
-		if (dayNumber > 9){
-			canvas.drawText(dayNumber+"", 160, 660, paint);
+		if (2 > 9){
+			canvas.drawText("b"+"", 160, 660, paint);
 		} else {
-			canvas.drawText(dayNumber+"", 280, 660, paint);
+			canvas.drawText("b"+"", 280, 660, paint);
 		}
 		paint.setTextSize(220);
 		paint.setColor(Color.WHITE);
-		canvas.drawText(monthName, 230, 185, paint);*/
-		paint.setColor(Color.BLACK);
-		RectF rectf = new RectF(0,0,250,250);
-		canvas.drawRect(rectf, paint);
+		canvas.drawText("a", 230, 185, paint);*/
 	}
 }

@@ -1,6 +1,9 @@
 package com.sm.daysuntilcards;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
@@ -108,7 +111,8 @@ public class CardListAdapter extends BaseAdapter{
 			holder.title= (TextView) convertView.findViewById(R.id.eventNameView);
 			holder.count = (TextView) convertView.findViewById(R.id.daysView);
 			holder.weekend = (TextView) convertView.findViewById(R.id.weekendNoticeView);
-			holder.dc = (DrawCalendar) convertView.findViewById(R.id.calendarIcon);
+			holder.calMonthView = (TextView) convertView.findViewById(R.id.calMonthView);
+			holder.calDayView = (TextView) convertView.findViewById(R.id.calDayView);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -117,10 +121,26 @@ public class CardListAdapter extends BaseAdapter{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		Boolean showWeekendNotice = prefs.getBoolean("showWeekendNotice", true);
 		
+		SimpleDateFormat sdf1 = new SimpleDateFormat("MM");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("MMM");
+		Date temptime = new Date();
+		String outputMonthString = "";
+		try {
+			temptime = sdf1.parse(""+(month+1));
+			outputMonthString = sdf2.format(temptime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		holder.calMonthView.setText(outputMonthString);
+		holder.calDayView.setText(""+day);
+		holder.calMonthView.bringToFront();
+		holder.calDayView.bringToFront();
+		if (day < 10){
+			holder.calDayView.setText(" "+day);
+		}
 		holder.title.setText(title);
 		holder.count.setText(timeRemaining);
-		DrawCalendar newcal = new DrawCalendar(context);
-		holder.dc = newcal;
 		if (weekends && showWeekendNotice){
 			holder.weekend.setVisibility(View.VISIBLE);
 		} else {
@@ -218,6 +238,7 @@ public class CardListAdapter extends BaseAdapter{
 	  TextView count;
 	  TextView weekend;
 	  int position;
-	  DrawCalendar dc;
+	  TextView calMonthView;
+	  TextView calDayView;
 	}
 }
