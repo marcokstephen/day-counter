@@ -22,11 +22,13 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -79,11 +81,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 					.setTabListener(this));
 		}
 		
-		if (!isCardsServiceRunning()){
-		     Intent serviceIntent = new Intent("your.package.MyService");
+		/*if (!isCardsServiceRunning()){
+		     Intent serviceIntent = new Intent("com.sm.daysuntilcards.CardsService");
 		     this.startService(serviceIntent);
-		     Log.d("OUTPUT","starting service");
-		}
+		     Log.d("SERVICE","starting service");
+		}*/
 	}
 	
 	@Override

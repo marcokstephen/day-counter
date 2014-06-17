@@ -12,15 +12,18 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -53,7 +56,7 @@ public class EditEvent extends Activity {
 	static boolean daysSinceBox = false;
 	static String name = "";
 	static int repeat = 0, repeatRate = 0;
-	static boolean weekends = false, since = false;
+	static boolean weekends = false, since = false, notify = false;
 	static String oldname = "";
 		
 	@Override
@@ -78,6 +81,7 @@ public class EditEvent extends Activity {
 			since = jsonEvent.getBoolean("since");
 			repeat = jsonEvent.getInt("repeat");
 			repeatRate = jsonEvent.getInt("repeatRate");
+			notify = jsonEvent.getBoolean("notify");
 			oldname = name;
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -99,8 +103,16 @@ public class EditEvent extends Activity {
 		final Button timeButton = (Button) findViewById(R.id.timeButton);
 		final Button createButton = (Button) findViewById(R.id.createButton);
 		final Spinner repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
+		final CheckBox notifyBox = (CheckBox) findViewById(R.id.notifyCheckBox);
 		
 		eventText.setText(name);
+		
+		if (notify){
+			notifyBox.setChecked(true);
+		} else {
+			notifyBox.setChecked(false);
+		}
+		
 		if (repeatRate != 0) repeatRateText.setText(""+repeatRate);
 		weekBox.setChecked(weekends);
 		sinceBox.setChecked(since);
@@ -207,6 +219,7 @@ public class EditEvent extends Activity {
 						obj.put("since", sinceBox.isChecked());
 						obj.put("repeat", repeatSpinner.getSelectedItemPosition());
 						obj.put("repeatRate", Integer.parseInt(repeatRateText.getText().toString()));
+						obj.put("notify", notifyBox.isChecked());
 						String stringDate = obj.toString();
 						deleteFile(oldname);
 						FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);

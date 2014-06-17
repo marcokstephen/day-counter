@@ -60,7 +60,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcards.MainActivity" />
         </activity>
-			<service android:name=".MyService">
+			<service android:name=".CardsService">
 			    <intent-filter>
 			        <action android:name="com.sm.daysuntilcards.CardsService" />
 			    </intent-filter>

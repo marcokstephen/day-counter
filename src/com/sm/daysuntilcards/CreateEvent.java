@@ -12,15 +12,21 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
+import android.text.format.Time;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -55,6 +61,8 @@ public class CreateEvent extends Activity {
 	static Date eventDate = new Date();
 	static boolean twentyFourHourClock = false;
 	static boolean daysSinceBox = false;
+	static boolean notifyBox = false;
+	private Context contex;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +70,7 @@ public class CreateEvent extends Activity {
 		setContentView(R.layout.fragment_create_event);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		twentyFourHourClock = prefs.getBoolean("24hour",false);
+		contex = this;
 		
 		final Calendar c = Calendar.getInstance();
 		hour = c.get(Calendar.HOUR_OF_DAY);
@@ -159,6 +168,8 @@ public class CreateEvent extends Activity {
 			}
 		});
 		
+		final CheckBox notifyBox = (CheckBox) findViewById(R.id.notifyCheckBox);
+		
 		Button timeButton = (Button) findViewById(R.id.timeButton);
 		timeButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v){
@@ -200,6 +211,7 @@ public class CreateEvent extends Activity {
 						obj.put("since", daysSinceBox);
 						obj.put("repeat", repeatSpinner.getSelectedItemPosition());
 						obj.put("repeatRate", Integer.parseInt(repeatRateEditText.getText().toString()));
+						obj.put("notify",notifyBox.isChecked());
 						String stringDate = obj.toString();
 						FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
 						fos.write(stringDate.getBytes());
@@ -208,6 +220,19 @@ public class CreateEvent extends Activity {
 						e.printStackTrace();
 					} catch (IOException e) {
 						e.printStackTrace();
+					}
+					boolean notification = notifyBox.isChecked();
+					if (notification){
+						int alarmID = Integer.parseInt(month+day+""+hour+minute);
+						Intent i = new Intent(contex, CardsService.class);
+						i.putExtra("com.sm.daysuntilcards.EVENTNAME", eventText.getText().toString());
+				        Time now = new Time();
+				        now.set(0, minute, hour, day, month, year);
+				        Log.d("SERVICE","event time: " + now.toMillis(false));
+				        
+				        AlarmManager mgr = (AlarmManager) CreateEvent.this.getSystemService(Context.ALARM_SERVICE);
+				        PendingIntent pi = PendingIntent.getService(contex, 0, i, 0);
+				        mgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, now.toMillis(false), pi);
 					}
 					finish();
 				}

@@ -39,14 +39,6 @@
         android:layout_below="@+id/eventText"
         android:text="@string/change_date" />
 
-    <CheckBox
-        android:id="@+id/weekBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/timeButton"
-        android:layout_below="@+id/timeButton"
-        android:text="@string/exclude_weekends" />
-
     <TextView
         android:id="@+id/timeView"
         android:layout_width="wrap_content"
@@ -133,5 +125,21 @@
         android:layout_toRightOf="@+id/repeatRateEditText"
         android:text="@string/temp"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <CheckBox
+        android:id="@+id/notifyCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/weekBox"
+        android:layout_below="@+id/timeButton"
+        android:text="@string/notification_check_box_create" />
+
+    <CheckBox
+        android:id="@+id/weekBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/timeButton"
+        android:layout_below="@+id/notifyCheckBox"
+        android:text="@string/exclude_weekends" />
 
 </RelativeLayout>
