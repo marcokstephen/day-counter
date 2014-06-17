@@ -3,7 +3,7 @@
     package="com.sm.daysuntilcards"
     android:versionCode="1"
     android:versionName="1.0" >
-
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
@@ -60,6 +60,21 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcards.MainActivity" />
         </activity>
+			<service android:name=".MyService">
+			    <intent-filter>
+			        <action android:name="com.sm.daysuntilcards.CardsService" />
+			    </intent-filter>
+			</service>
+			
+			<receiver
+			    android:name=".BootReceiver"
+			    android:enabled="true"
+			    android:exported="true"
+			    android:label="BootReceiver">
+			    <intent-filter>
+			        <action android:name="android.intent.action.BOOT_COMPLETED" />
+			    </intent-filter>
+			</receiver>
     </application>
 
 </manifest>

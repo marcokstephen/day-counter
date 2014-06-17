@@ -20,6 +20,8 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -76,6 +78,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+		
+		if (!isCardsServiceRunning()){
+		     Intent serviceIntent = new Intent("your.package.MyService");
+		     this.startService(serviceIntent);
+		     Log.d("OUTPUT","starting service");
+		}
 	}
 	
 	@Override
@@ -94,6 +102,16 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		mViewPager.setCurrentItem(page);
 		Log.d("FRAGMENT","Refreshed!");
 	}
+	
+	private boolean isCardsServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (CardsService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 	
 	public static long eventToMs (JSONObject event){
 		int year=0,month=0,day=0,hour=0,minute=0;
@@ -201,10 +219,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		@Override
 		public Fragment getItem(int position) {
 			if (position == 0){
-				Log.d("FRAGMENT","Requesting new UNTIL fragment");
 				return new UntilFragment();
 			} else {
-				Log.d("FRAGMENT","Requesting new SINCE fragment");
 				return new SinceFragment();
 			}
 		}
@@ -456,7 +472,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	}
 	
 	public static void generateLists(Context context){
-		Log.d("FRAGMENT","generating new lists");
 		daysUntil = new ArrayList<JSONObject>();
 		daysSince = new ArrayList<JSONObject>();
 		Calendar c = Calendar.getInstance();
