@@ -65,6 +65,11 @@
 			        <action android:name="com.sm.daysuntilcards.CardsService" />
 			    </intent-filter>
 			</service>
+			<service android:name=".BootService">
+	   			 <intent-filter>
+		    	    <action android:name="com.sm.daysuntilcards.BootService" />
+		   		 </intent-filter>
+			</service>
 			
 			<receiver
 			    android:name=".BootReceiver"

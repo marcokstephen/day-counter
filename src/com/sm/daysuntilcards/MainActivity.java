@@ -78,12 +78,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
-		
-		/*if (!isCardsServiceRunning()){
-		     Intent serviceIntent = new Intent("com.sm.daysuntilcards.CardsService");
-		     this.startService(serviceIntent);
-		     Log.d("SERVICE","starting service");
-		}*/
 	}
 	
 	@Override
