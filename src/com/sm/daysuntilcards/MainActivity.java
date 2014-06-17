@@ -20,8 +20,6 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -98,16 +96,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		mViewPager.setCurrentItem(page);
 		Log.d("FRAGMENT","Refreshed!");
 	}
-	
-	private boolean isCardsServiceRunning() {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (CardsService.class.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 	
 	public static long eventToMs (JSONObject event){
 		int year=0,month=0,day=0,hour=0,minute=0;

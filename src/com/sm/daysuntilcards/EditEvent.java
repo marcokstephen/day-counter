@@ -69,8 +69,6 @@ public class EditEvent extends Activity {
 		contex = this;
 		Intent intent = getIntent();
 		final String eventString = intent.getStringExtra("com.sm.daysuntilcards.EVENT");
-		final int eventPosition = intent.getIntExtra("com.sm.daysuntilcards.POSITION", 0);
-		final boolean untilList = intent.getBooleanExtra("com.sm.daysuntilcards.UNTIL", true);
 		
 		JSONObject jsonEvent = new JSONObject();
 		try {

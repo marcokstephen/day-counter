@@ -46,5 +46,8 @@
     <string name="notice_weekends_summary">Show notice on cards that are not counting weekends</string>
     <string name="excludes_weekends">excludes weekends</string>
     <string name="notification_check_box_create">Notify when occurs</string>
+    <string name="notification_icon_imageview">Notification is set</string>
+    <string name="tempmonth">Jan</string>
+    <string name="tempday">29</string>
 
 </resources>

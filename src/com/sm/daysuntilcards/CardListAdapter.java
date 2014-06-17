@@ -5,8 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,9 +17,8 @@ import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 @SuppressLint("SimpleDateFormat")
@@ -51,10 +52,10 @@ public class CardListAdapter extends BaseAdapter{
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		JSONObject event = (JSONObject) getItem(position);
-		int year=0,month=0,day=0,hour=0,minute=0,repeats=0;
+		int year=0,month=0,day=0,hour=0,minute=0;
 		String title = "placeholder";
 		String timeRemaining = "";
-		boolean weekends = false;
+		boolean weekends = false, notify = false;
 		long differenceDays = 0; long difference = 0;
 		try {
 			year = event.getInt("year");
@@ -65,6 +66,7 @@ public class CardListAdapter extends BaseAdapter{
 			title = event.getString("name");
 			title = title.replaceAll("PARSE", "/");
 			weekends = event.getBoolean("weekends");
+			notify = event.getBoolean("notify");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -115,6 +117,7 @@ public class CardListAdapter extends BaseAdapter{
 			holder.weekend = (TextView) convertView.findViewById(R.id.weekendNoticeView);
 			holder.calMonthView = (TextView) convertView.findViewById(R.id.calMonthView);
 			holder.calDayView = (TextView) convertView.findViewById(R.id.calDayView);
+			holder.alarmIcon = (ImageView) convertView.findViewById(R.id.notificationIconView);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -148,7 +151,11 @@ public class CardListAdapter extends BaseAdapter{
 		} else {
 			holder.weekend.setVisibility(View.GONE);
 		}
-
+		if (notify) {
+			holder.alarmIcon.setVisibility(View.VISIBLE);
+		} else {
+			holder.alarmIcon.setVisibility(View.GONE);
+		}
 		return convertView;
 	}
 	
@@ -243,5 +250,6 @@ public class CardListAdapter extends BaseAdapter{
 	  int position;
 	  TextView calMonthView;
 	  TextView calDayView;
+	  ImageView alarmIcon;
 	}
 }

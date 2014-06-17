@@ -3,14 +3,10 @@ package com.sm.daysuntilcards;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
-
 
 public class CardsService extends IntentService {
 
@@ -40,7 +36,6 @@ public class CardsService extends IntentService {
 		 notify.setContentIntent(resultPendingIntent);
 		 NotificationManager mNotificationManager =
 		     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		 // mId allows you to update the notification later on.
 		 mNotificationManager.notify(0, notify.build());
 		 stopSelf();
 	}

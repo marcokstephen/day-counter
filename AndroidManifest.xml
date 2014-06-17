@@ -60,12 +60,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcards.MainActivity" />
         </activity>
-			<service android:name=".CardsService">
+			<service android:name=".CardsService" android:exported="false">
 			    <intent-filter>
 			        <action android:name="com.sm.daysuntilcards.CardsService" />
 			    </intent-filter>
 			</service>
-			<service android:name=".BootService">
+			<service android:name=".BootService" android:exported="false">
 	   			 <intent-filter>
 		    	    <action android:name="com.sm.daysuntilcards.BootService" />
 		   		 </intent-filter>
