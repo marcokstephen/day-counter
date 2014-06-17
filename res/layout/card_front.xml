@@ -77,6 +77,15 @@
  		    android:layout_alignParentLeft="true"
  		    android:background="@drawable/calendar_image" >
  		</FrameLayout>
+
+ 		<ImageView
+ 		    android:id="@+id/notificationIconView"
+ 		    android:layout_width="15dp"
+ 		    android:layout_height="10dp"
+ 		    android:layout_alignParentRight="true"
+ 		    android:layout_alignParentTop="true"
+ 		    android:layout_marginRight="15dp"
+ 		    android:src="@drawable/ic_action_alarms" />
   	    
     </RelativeLayout>
 
