@@ -34,6 +34,7 @@ public class BootService extends Service {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+            stopSelf();
             return 0;
     }
 

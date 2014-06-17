@@ -42,5 +42,6 @@ public class CardsService extends IntentService {
 		     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		 // mId allows you to update the notification later on.
 		 mNotificationManager.notify(0, notify.build());
+		 stopSelf();
 	}
 }

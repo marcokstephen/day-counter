@@ -22,12 +22,14 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -484,13 +486,14 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				fis.close();
 				try {
 					JSONObject dateJsonObj = new JSONObject(value);
-					boolean since=false;
+					boolean since=false, notify=false;
 					String name = "";
 					int repeat = 0;
 					try {
 						name = dateJsonObj.getString("name");
 						since = dateJsonObj.getBoolean("since");
 						repeat = dateJsonObj.getInt("repeat");
+						notify = dateJsonObj.getBoolean("notify");
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
@@ -505,6 +508,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 						fos.write(dateJsonObj.toString().getBytes());
 						fos.close();
 						daysUntil.add(dateJsonObj); //adding to daysUntil because it is now an upcoming date
+						if (notify) refreshNotification(context, dateJsonObj);
 					} else {
 						context.deleteFile(name);
 					}
@@ -520,5 +524,25 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		
 		sortList(daysUntil, true);
 		sortList(daysSince, false);
+	}
+	
+	public static void refreshNotification(Context context, JSONObject dateJsonObj) throws JSONException{
+		int minute = dateJsonObj.getInt("minute");
+		int hour = dateJsonObj.getInt("hour");
+		int day = dateJsonObj.getInt("day");
+		int month = dateJsonObj.getInt("month");
+		int year = dateJsonObj.getInt("year");
+		int alarmID = dateJsonObj.getInt("alarmid");
+		String name = dateJsonObj.getString("name");
+		name.replaceAll("PARSE", "/");
+		Intent i = new Intent(context, CardsService.class);
+		i.putExtra("com.sm.daysuntilcards.EVENTNAME", name);
+		i.putExtra("com.sm.daysuntilcards.ALARMID", alarmID);
+        Time now = new Time();
+        now.set(0, minute, hour, day, month, year);
+        
+        AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pi = PendingIntent.getService(context, alarmID, i, 0);
+        mgr.set(AlarmManager.RTC, now.toMillis(false), pi);
 	}
 }
