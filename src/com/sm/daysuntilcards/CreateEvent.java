@@ -186,6 +186,7 @@ public class CreateEvent extends Activity {
 		Button createButton = (Button) findViewById(R.id.createButton);
 		createButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v){
+				int alarmID = Integer.parseInt(month+""+day+""+hour+""+minute);
 				if (eventText.getText().toString().matches("")){
 					Toast.makeText(CreateEvent.this, "Missing event name", Toast.LENGTH_SHORT).show();
 				    return;
@@ -212,6 +213,7 @@ public class CreateEvent extends Activity {
 						obj.put("repeat", repeatSpinner.getSelectedItemPosition());
 						obj.put("repeatRate", Integer.parseInt(repeatRateEditText.getText().toString()));
 						obj.put("notify",notifyBox.isChecked());
+						obj.put("alarmid", alarmID);
 						String stringDate = obj.toString();
 						FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
 						fos.write(stringDate.getBytes());
@@ -221,18 +223,17 @@ public class CreateEvent extends Activity {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					boolean notification = notifyBox.isChecked();
-					if (notification){
-						int alarmID = Integer.parseInt(month+day+""+hour+minute);
+					if (notifyBox.isChecked()){
 						Intent i = new Intent(contex, CardsService.class);
 						i.putExtra("com.sm.daysuntilcards.EVENTNAME", eventText.getText().toString());
+						i.putExtra("com.sm.daysuntilcards.ALARMID", alarmID);
 				        Time now = new Time();
 				        now.set(0, minute, hour, day, month, year);
-				        Log.d("SERVICE","event time: " + now.toMillis(false));
 				        
 				        AlarmManager mgr = (AlarmManager) CreateEvent.this.getSystemService(Context.ALARM_SERVICE);
-				        PendingIntent pi = PendingIntent.getService(contex, 0, i, 0);
-				        mgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, now.toMillis(false), pi);
+				        PendingIntent pi = PendingIntent.getService(contex, alarmID, i, 0);
+				        mgr.set(AlarmManager.RTC, now.toMillis(false), pi);
+				        Log.d("service", now.toMillis(false)+" is event");
 					}
 					finish();
 				}

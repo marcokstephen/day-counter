@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -58,11 +59,14 @@ public class EditEvent extends Activity {
 	static int repeat = 0, repeatRate = 0;
 	static boolean weekends = false, since = false, notify = false;
 	static String oldname = "";
+	static int alarmID = 0;
+	private Context contex;
+	static boolean previousNotifyValue = false;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		contex = this;
 		Intent intent = getIntent();
 		final String eventString = intent.getStringExtra("com.sm.daysuntilcards.EVENT");
 		final int eventPosition = intent.getIntExtra("com.sm.daysuntilcards.POSITION", 0);
@@ -82,6 +86,7 @@ public class EditEvent extends Activity {
 			repeat = jsonEvent.getInt("repeat");
 			repeatRate = jsonEvent.getInt("repeatRate");
 			notify = jsonEvent.getBoolean("notify");
+			alarmID = jsonEvent.getInt("alarmid");
 			oldname = name;
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -109,6 +114,7 @@ public class EditEvent extends Activity {
 		
 		if (notify){
 			notifyBox.setChecked(true);
+			previousNotifyValue = true;
 		} else {
 			notifyBox.setChecked(false);
 		}
@@ -220,6 +226,7 @@ public class EditEvent extends Activity {
 						obj.put("repeat", repeatSpinner.getSelectedItemPosition());
 						obj.put("repeatRate", Integer.parseInt(repeatRateText.getText().toString()));
 						obj.put("notify", notifyBox.isChecked());
+						obj.put("alarmid", alarmID);
 						String stringDate = obj.toString();
 						deleteFile(oldname);
 						FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
@@ -229,6 +236,28 @@ public class EditEvent extends Activity {
 						e.printStackTrace();
 					} catch (IOException e) {
 						e.printStackTrace();
+					}
+					if (notifyBox.isChecked()){
+						Intent i = new Intent(contex, CardsService.class);
+						i.putExtra("com.sm.daysuntilcards.EVENTNAME", eventText.getText().toString());
+						i.putExtra("com.sm.daysuntilcards.ALARMID", alarmID);
+				        Time now = new Time();
+				        now.set(0, minute, hour, day, month, year);
+				        
+				        AlarmManager mgr = (AlarmManager) contex.getSystemService(Context.ALARM_SERVICE);
+				        PendingIntent pi = PendingIntent.getService(contex, alarmID, i, 0);
+				        mgr.set(AlarmManager.RTC, now.toMillis(false), pi);
+				        Log.d("service", now.toMillis(false)+" is event");
+					} else if (previousNotifyValue){
+						//delete any alarms by overwriting with blank intent
+						//TODO: doesn't work properly
+						Intent i = new Intent();
+				        Time now = new Time();
+				        now.set(0, minute, hour, day, month, year);
+				        
+				        AlarmManager mgr = (AlarmManager) contex.getSystemService(Context.ALARM_SERVICE);
+				        PendingIntent pi = PendingIntent.getService(contex, alarmID, i, 0);
+				        mgr.set(AlarmManager.RTC, now.toMillis(false), pi);
 					}
 					finish();
 				}

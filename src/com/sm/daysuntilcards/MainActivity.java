@@ -22,13 +22,12 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
-import android.app.PendingIntent;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,9 +56,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		/*DrawCalendar drawCalendar = new DrawCalendar(this, "Jan", 5);
-		drawCalendar.setBackgroundColor(Color.WHITE);
-		setContentView(drawCalendar);*/
+		NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		notificationManager.cancelAll();
 	
 		setContentView(R.layout.activity_main);
 		final ActionBar actionBar = getActionBar();
