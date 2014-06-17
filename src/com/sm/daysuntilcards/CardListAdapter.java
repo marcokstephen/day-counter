@@ -5,10 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -16,9 +15,12 @@ import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+@SuppressLint("SimpleDateFormat")
 public class CardListAdapter extends BaseAdapter{
 	
 	private List<JSONObject> eventJsonList;
@@ -49,7 +51,7 @@ public class CardListAdapter extends BaseAdapter{
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		JSONObject event = (JSONObject) getItem(position);
-		int year=0,month=0,day=0,hour=0,minute=0;
+		int year=0,month=0,day=0,hour=0,minute=0,repeats=0;
 		String title = "placeholder";
 		String timeRemaining = "";
 		boolean weekends = false;
@@ -146,6 +148,7 @@ public class CardListAdapter extends BaseAdapter{
 		} else {
 			holder.weekend.setVisibility(View.GONE);
 		}
+
 		return convertView;
 	}
 	

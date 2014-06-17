@@ -48,16 +48,16 @@
  		    android:textColor="#B5B5B5"
  		    android:visibility="gone"
  		    android:textAppearance="?android:attr/textAppearanceSmall" />
- 		
+
 		<TextView
- 			    android:id="@+id/calMonthView"
- 			    android:layout_width="wrap_content"
- 			    android:layout_height="wrap_content"
- 			    android:text="Jan"
- 			    android:paddingLeft="28dp"
- 			    android:paddingTop="21dp"
- 			    android:textColor="#ffffff"
- 			    android:textSize="22sp" />
+		    android:id="@+id/calMonthView"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="Jan"
+		    android:paddingLeft="28dp"
+		    android:paddingTop="21dp"
+		    android:textColor="#ffffff"
+		    android:textSize="22sp" />
 		
 		<TextView
  			    android:id="@+id/calDayView"
