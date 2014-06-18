@@ -20,7 +20,7 @@ public class CardsService extends IntentService {
 	    NotificationCompat.Builder notify = new NotificationCompat.Builder(this)
 	    	.setContentTitle(name)
 	    	.setContentText("just occurred!")
-	    	.setSmallIcon(R.drawable.ic_action_alarms)
+	    	.setSmallIcon(R.drawable.ic_action_alarms_white)
 	    	.setAutoCancel(true);
 	    Intent notifIntent = new Intent(this, MainActivity.class);
 	    notifIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

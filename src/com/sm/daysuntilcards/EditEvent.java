@@ -142,7 +142,7 @@ public class EditEvent extends Activity {
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
-				if (isChecked || !eventDate.after(currentDate)){
+				if (isChecked || eventDate.before(currentDate)){
 					repeatSpinner.setEnabled(false);
 					repeatSpinner.setSelection(0); //also sets showSpinnerMessages(false)
 					if (!isChecked) daysSinceBox = false;
@@ -152,6 +152,20 @@ public class EditEvent extends Activity {
 				}
 			}
 		});
+		Date currentDate = null;
+		try {
+			currentDate = fromDateFormat.parse(c.get(Calendar.DATE)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.YEAR));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		if (eventDate.before(currentDate)){
+			notifyBox.setEnabled(false);
+			sinceBox.setChecked(true);
+			sinceBox.setEnabled(false);
+		} else {
+			notifyBox.setEnabled(true);
+			sinceBox.setEnabled(true);
+		}
 		
 		ArrayAdapter<CharSequence> repeatadapter = ArrayAdapter.createFromResource(this, R.array.spinnerArray, android.R.layout.simple_spinner_item);
 		repeatadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -210,7 +224,6 @@ public class EditEvent extends Activity {
 				} else {
 					String eventName = eventText.getText().toString().replaceAll("/", "PARSE"); //fix linux naming bug (canont contain "/")
 					if (repeatSpinner.getSelectedItemPosition() == 0) repeatRateText.setText("0");
-					boolean weekbool = weekBox.isChecked();
 					JSONObject obj = new JSONObject();
 					try{
 						String filename = eventName;
@@ -220,7 +233,7 @@ public class EditEvent extends Activity {
 						obj.put("year", year);
 						obj.put("hour", hour);
 						obj.put("minute", minute);
-						obj.put("weekends", weekbool);
+						obj.put("weekends", weekBox.isChecked());
 						obj.put("since", sinceBox.isChecked());
 						obj.put("repeat", repeatSpinner.getSelectedItemPosition());
 						obj.put("repeatRate", Integer.parseInt(repeatRateText.getText().toString()));
@@ -345,11 +358,20 @@ public class EditEvent extends Activity {
 			}
 			Spinner repeatSpinner = (Spinner) getActivity().findViewById(R.id.repeatSpinner);
 			CheckBox sinceBox = (CheckBox) getActivity().findViewById(R.id.sinceBox);
-			if (!eventDate.after(currentDate) || sinceBox.isChecked()){
+			CheckBox notifyBox = (CheckBox) getActivity().findViewById(R.id.notifyCheckBox);
+			if (eventDate.before(currentDate) || sinceBox.isChecked()){
 				repeatSpinner.setEnabled(false);
 				repeatSpinner.setSelection(0);
 			} else {
 				repeatSpinner.setEnabled(true);
+			}
+			if (eventDate.before(currentDate)){
+				notifyBox.setEnabled(false);
+				sinceBox.setChecked(true);
+				sinceBox.setEnabled(false);
+			} else {
+				notifyBox.setEnabled(true);
+				sinceBox.setEnabled(true);
 			}
 		}
 	}
