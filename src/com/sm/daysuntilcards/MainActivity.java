@@ -114,7 +114,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		final ActionBar actionBar = getActionBar();
 		int page = actionBar.getSelectedNavigationIndex();
 		mViewPager.setCurrentItem(page);
-		Log.d("FRAGMENT","Refreshed!");
 	}
 	
 	public static long eventToMs (JSONObject event){

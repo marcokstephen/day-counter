@@ -226,7 +226,6 @@ public class CardListAdapter extends BaseAdapter{
 			Calendar currentDate = Calendar.getInstance();
 			Calendar eventDate = Calendar.getInstance();
 			eventDate.set(year, month, day, hour, minute, 00);
-
 			if (currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
 				currentDate.add(Calendar.DATE, -2);
 				currentDate.set(currentDate.get(Calendar.YEAR),currentDate.get(Calendar.MONTH),currentDate.get(Calendar.DATE),0,0,0);
