@@ -31,7 +31,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.format.Time;
@@ -52,10 +54,26 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	public static List<JSONObject> daysSince;
 	public static CardListAdapter cla;
 	public static CardListAdapter cla2;
+	public static int APP_THEME = R.style.Theme_Example;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		setTheme(R.style.ThemePurple);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		int theme = Integer.parseInt(prefs.getString("actionBarTheme", "0"));
+		if (theme == 0){
+			APP_THEME = R.style.Theme_Example;
+		} else if (theme == 1){
+			APP_THEME = R.style.Theme_Red;
+		} else if (theme == 2){
+			APP_THEME = R.style.Theme_Orange;
+		} else if (theme == 3){
+			APP_THEME = R.style.Theme_Green;
+		} else if (theme == 4){
+			APP_THEME = R.style.Theme_Blue;
+		} else if (theme == 5){
+			APP_THEME = R.style.ThemePurple;
+		}
+		setTheme(APP_THEME);
 		super.onCreate(savedInstanceState);
 		NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.cancelAll();

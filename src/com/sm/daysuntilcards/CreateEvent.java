@@ -65,6 +65,7 @@ public class CreateEvent extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		setTheme(MainActivity.APP_THEME);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_create_event);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

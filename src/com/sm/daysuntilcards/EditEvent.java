@@ -65,6 +65,7 @@ public class EditEvent extends Activity {
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		setTheme(MainActivity.APP_THEME);
 		super.onCreate(savedInstanceState);
 		contex = this;
 		Intent intent = getIntent();
@@ -107,7 +108,7 @@ public class EditEvent extends Activity {
 		final Button createButton = (Button) findViewById(R.id.createButton);
 		final Spinner repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
 		final CheckBox notifyBox = (CheckBox) findViewById(R.id.notifyCheckBox);
-		
+		name = name.replaceAll("PARSE", "/");
 		eventText.setText(name);
 		
 		if (notify){

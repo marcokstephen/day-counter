@@ -9,6 +9,7 @@ public class HelpMenu extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		setTheme(MainActivity.APP_THEME);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_help_menu);
 		TextView helpTextView = (TextView) findViewById(R.id.helpTextView);
