@@ -80,6 +80,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	
 		setContentView(R.layout.activity_main);
 		final ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowHomeEnabled(false);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		refreshListFragments(this);
 
