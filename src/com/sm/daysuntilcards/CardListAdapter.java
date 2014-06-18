@@ -12,12 +12,14 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -108,6 +110,10 @@ public class CardListAdapter extends BaseAdapter{
 			}
 		}
 		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		Boolean showWeekendNotice = prefs.getBoolean("showWeekendNotice", true);
+		String calendarTheme = prefs.getString("calendarIconTheme", "1");
+		
 		ViewHolder holder = null;
 		if (convertView == null){
 			convertView = myInflater.inflate(R.layout.card_front, null);
@@ -118,14 +124,27 @@ public class CardListAdapter extends BaseAdapter{
 			holder.calMonthView = (TextView) convertView.findViewById(R.id.calMonthView);
 			holder.calDayView = (TextView) convertView.findViewById(R.id.calDayView);
 			holder.alarmIcon = (ImageView) convertView.findViewById(R.id.notificationIconView);
+			holder.calendarIcon = (FrameLayout) convertView.findViewById(R.id.calendarFrameView);
+			if (calendarTheme.equals("1")){
+				holder.calendarIcon.setBackgroundResource(R.drawable.calendar_image);
+			} else if (calendarTheme.equals("2")){
+				holder.calendarIcon.setBackgroundResource(R.drawable.calendar_image_orange);
+				holder.calDayView.setTextColor(Color.parseColor("#fdae46"));
+			} else if (calendarTheme.equals("3")){
+				holder.calendarIcon.setBackgroundResource(R.drawable.calendar_image_green);
+				holder.calDayView.setTextColor(Color.parseColor("#5bc865"));
+			} else if (calendarTheme.equals("4")){
+				holder.calendarIcon.setBackgroundResource(R.drawable.calendar_image_blue);
+				holder.calDayView.setTextColor(Color.parseColor("#61abff"));
+			} else if (calendarTheme.equals("5")){
+				holder.calendarIcon.setBackgroundResource(R.drawable.calendar_image_purple);
+				holder.calDayView.setTextColor(Color.parseColor("#9c5faf"));
+			}
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		Boolean showWeekendNotice = prefs.getBoolean("showWeekendNotice", true);
-		
+
 		SimpleDateFormat sdf1 = new SimpleDateFormat("MM");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("MMM");
 		Date temptime = new Date();
@@ -251,5 +270,6 @@ public class CardListAdapter extends BaseAdapter{
 	  TextView calMonthView;
 	  TextView calDayView;
 	  ImageView alarmIcon;
+	  FrameLayout calendarIcon;
 	}
 }

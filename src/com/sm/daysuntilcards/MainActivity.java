@@ -55,6 +55,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		setTheme(R.style.ThemePurple);
 		super.onCreate(savedInstanceState);
 		NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.cancelAll();

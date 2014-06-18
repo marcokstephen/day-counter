@@ -49,5 +49,8 @@
     <string name="notification_icon_imageview">Notification is set</string>
     <string name="tempmonth">Jan</string>
     <string name="tempday">29</string>
+    <string name="actionbar_theme_setting">Action Bar theme</string>
+    <string name="select_theme">Select Theme</string>
+    <string name="calendar_icon_setting">Calendar icon theme</string>
 
 </resources>

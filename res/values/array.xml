@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="actionbar_theme_array">
+        <item>Holo Dark (default)</item>
+        <item>Red</item>
+        <item>Orange</item>
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Purple</item>
+    </string-array>
+    <string-array name="actionbar_theme_values">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+    </string-array>
+    <string-array name="calendarIcon_array">
+        <item>Red</item>
+        <item>Orange</item>
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Purple</item>
+    </string-array>
+    <string-array name="calendarIcon_values">
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+    </string-array>
+</resources>

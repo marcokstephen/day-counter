@@ -18,5 +18,21 @@
    		android:defaultValue="true"
    		android:summary="@string/notice_weekends_summary" >
     </CheckBoxPreference>
+    <ListPreference
+        android:title="@string/actionbar_theme_setting"
+        android:key="actionBarTheme"
+        android:defaultValue="0"
+        android:entries="@array/actionbar_theme_array"
+        android:entryValues="@array/actionbar_theme_values"
+        android:dialogTitle="@string/select_theme" >
+    </ListPreference>
+    <ListPreference
+        android:title="@string/calendar_icon_setting"
+        android:key="calendarIconTheme"
+        android:defaultValue="1"
+        android:entries="@array/calendarIcon_array"
+        android:entryValues="@array/calendarIcon_values"
+        android:dialogTitle="@string/select_theme" >
+    </ListPreference>
     
 </PreferenceScreen>
