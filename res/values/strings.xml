@@ -2,7 +2,7 @@
 <resources>
 
     <string name="temp">temp</string>
-    <string name="app_name">Days Until</string>
+    <string name="app_name">Days Until Lite</string>
     <string name="title_section1">Days Until</string>
     <string name="title_section2">Days Since</string>
     <string name="action_settings">Settings</string>

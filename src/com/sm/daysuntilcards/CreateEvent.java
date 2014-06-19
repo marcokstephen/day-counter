@@ -10,6 +10,9 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -68,6 +71,9 @@ public class CreateEvent extends Activity {
 		setTheme(MainActivity.APP_THEME);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_create_event);
+		AdView mAdView;
+        mAdView = (AdView) findViewById(R.id.adView);
+        mAdView.loadAd(new AdRequest.Builder().build());
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		twentyFourHourClock = prefs.getBoolean("24hour",false);
 		contex = this;
