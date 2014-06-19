@@ -1,4 +1,6 @@
-package com.sm.daysuntilcards;
+package com.sm.daysuntilcardslite;
+
+import com.sm.daysuntilcardslite.R;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -16,7 +18,7 @@ public class CardsService extends IntentService {
 
 	@Override
 	public void onHandleIntent(Intent intent){
-		String name = intent.getStringExtra("com.sm.daysuntilcards.EVENTNAME");
+		String name = intent.getStringExtra("com.sm.daysuntilcardslite.EVENTNAME");
 	    NotificationCompat.Builder notify = new NotificationCompat.Builder(this)
 	    	.setContentTitle(name)
 	    	.setContentText("just occurred!")

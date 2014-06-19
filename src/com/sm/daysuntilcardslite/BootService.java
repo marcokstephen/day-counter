@@ -1,4 +1,4 @@
-package com.sm.daysuntilcards;
+package com.sm.daysuntilcardslite;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -70,8 +70,8 @@ public class BootService extends Service {
     	int alarmID = jsonEvent.getInt("alarmid");
     	
 		Intent i = new Intent(this, CardsService.class);
-		i.putExtra("com.sm.daysuntilcards.EVENTNAME", name);
-		i.putExtra("com.sm.daysuntilcards.ALARMID", alarmID);
+		i.putExtra("com.sm.daysuntilcardslite.EVENTNAME", name);
+		i.putExtra("com.sm.daysuntilcardslite.ALARMID", alarmID);
         Time now = new Time();
         now.set(0, minute, hour, day, month, year);
         

@@ -1,4 +1,4 @@
-package com.sm.daysuntilcards;
+package com.sm.daysuntilcardslite;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.sm.daysuntilcardslite.R;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -271,7 +272,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
 					Intent intent = new Intent(getActivity(), DialogActivity.class);
-					intent.putExtra("com.sm.daysuntilcards.JSONSTRING", daysUntil.get(position).toString());
+					intent.putExtra("com.sm.daysuntilcardslite.JSONSTRING", daysUntil.get(position).toString());
 					startActivity(intent);
 				}
 			});
@@ -302,10 +303,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				switch (item.getItemId()){
 				case MENU_EDIT:
 					Intent intent = new Intent(getActivity(), EditEvent.class);
-					intent.putExtra("com.sm.daysuntilcards.EVENT", daysUntil.get(position).toString());
+					intent.putExtra("com.sm.daysuntilcardslite.EVENT", daysUntil.get(position).toString());
 					Log.d("OUTPUTINFO",daysUntil.get(position).toString());
-					intent.putExtra("com.sm.daysuntilcards.POSITION", position);
-					intent.putExtra("com.sm.daysuntilcards.UNTIL", true);
+					intent.putExtra("com.sm.daysuntilcardslite.POSITION", position);
+					intent.putExtra("com.sm.daysuntilcardslite.UNTIL", true);
 					startActivity(intent);
 					return false;
 				case MENU_REMOVE:
@@ -347,7 +348,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
 					Intent intent = new Intent(getActivity(), DialogActivity.class);
-					intent.putExtra("com.sm.daysuntilcards.JSONSTRING", daysSince.get(position).toString());
+					intent.putExtra("com.sm.daysuntilcardslite.JSONSTRING", daysSince.get(position).toString());
 					startActivity(intent);
 				}
 			});
@@ -378,9 +379,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			   switch (item.getItemId()){
 			   case MENU_EDIT:
 				   Intent intent = new Intent(getActivity(), EditEvent.class);
-				   intent.putExtra("com.sm.daysuntilcards.EVENT", daysSince.get(position).toString());
-				   intent.putExtra("com.sm.daysuntilcards.POSITION", position);
-				   intent.putExtra("com.sm.daysuntilcards.UNTIL", false);
+				   intent.putExtra("com.sm.daysuntilcardslite.EVENT", daysSince.get(position).toString());
+				   intent.putExtra("com.sm.daysuntilcardslite.POSITION", position);
+				   intent.putExtra("com.sm.daysuntilcardslite.UNTIL", false);
 				   startActivity(intent);
 				   return false;
 			   case MENU_REMOVE:
@@ -568,8 +569,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		String name = dateJsonObj.getString("name");
 		name.replaceAll("PARSE", "/");
 		Intent i = new Intent(context, CardsService.class);
-		i.putExtra("com.sm.daysuntilcards.EVENTNAME", name);
-		i.putExtra("com.sm.daysuntilcards.ALARMID", alarmID);
+		i.putExtra("com.sm.daysuntilcardslite.EVENTNAME", name);
+		i.putExtra("com.sm.daysuntilcardslite.ALARMID", alarmID);
         Time now = new Time();
         now.set(0, minute, hour, day, month, year);
         

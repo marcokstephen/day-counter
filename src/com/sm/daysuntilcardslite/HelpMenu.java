@@ -1,4 +1,6 @@
-package com.sm.daysuntilcards;
+package com.sm.daysuntilcardslite;
+
+import com.sm.daysuntilcardslite.R;
 
 import android.app.Activity;
 import android.os.Bundle;

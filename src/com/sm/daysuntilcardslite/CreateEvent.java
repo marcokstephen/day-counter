@@ -1,4 +1,4 @@
-package com.sm.daysuntilcards;
+package com.sm.daysuntilcardslite;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.sm.daysuntilcardslite.R;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -25,27 +26,32 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.preference.PreferenceManager;
+
+/*
+ * NOTE: Java months are off by 1 (start at 0). As such, they must be formatted as month+1, but not
+ * calculated this way
+ */
 
 @SuppressLint("SimpleDateFormat")
-public class EditEvent extends Activity {
+public class CreateEvent extends Activity {
 	static int day = 1;
 	static int month = 2;
 	static int year = 3;
@@ -58,120 +64,45 @@ public class EditEvent extends Activity {
 	static Date eventDate = new Date();
 	static boolean twentyFourHourClock = false;
 	static boolean daysSinceBox = false;
-	static String name = "";
-	static int repeat = 0, repeatRate = 0;
-	static boolean weekends = false, since = false, notify = false;
-	static String oldname = "";
-	static int alarmID = 0;
+	static boolean notifyBox = false;
 	private Context contex;
-	static boolean previousNotifyValue = false;
-		
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(MainActivity.APP_THEME);
 		super.onCreate(savedInstanceState);
-		contex = this;
-		Intent intent = getIntent();
-		final String eventString = intent.getStringExtra("com.sm.daysuntilcards.EVENT");
-		
-		JSONObject jsonEvent = new JSONObject();
-		try {
-			jsonEvent = new JSONObject(eventString);
-			hour = jsonEvent.getInt("hour");
-			minute = jsonEvent.getInt("minute");
-			year = jsonEvent.getInt("year");
-			month = jsonEvent.getInt("month");
-			day = jsonEvent.getInt("day");
-			name = jsonEvent.getString("name");
-			weekends = jsonEvent.getBoolean("weekends");
-			since = jsonEvent.getBoolean("since");
-			repeat = jsonEvent.getInt("repeat");
-			repeatRate = jsonEvent.getInt("repeatRate");
-			notify = jsonEvent.getBoolean("notify");
-			alarmID = jsonEvent.getInt("alarmid");
-			oldname = name;
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		
 		setContentView(R.layout.fragment_create_event);
 		AdView mAdView;
         mAdView = (AdView) findViewById(R.id.adView);
         mAdView.loadAd(new AdRequest.Builder().build());
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		twentyFourHourClock = prefs.getBoolean("24hour",false);
+		contex = this;
+		
 		final Calendar c = Calendar.getInstance();
-		
+		hour = c.get(Calendar.HOUR_OF_DAY);
+		minute = c.get(Calendar.MINUTE) + 1;
+		year = c.get(Calendar.YEAR);
+		month = c.get(Calendar.MONTH);
+		day = c.get(Calendar.DAY_OF_MONTH);
+
 		final EditText eventText = (EditText) findViewById(R.id.eventText);
-		final EditText repeatRateText = (EditText) findViewById(R.id.repeatRateEditText);
-		final TextView dateView = (TextView) findViewById(R.id.dateView);
 		final TextView timeView = (TextView) findViewById(R.id.timeView);
-		final CheckBox weekBox = (CheckBox) findViewById(R.id.weekBox);
-		final CheckBox sinceBox = (CheckBox) findViewById(R.id.sinceBox);
-		final Button dateButton = (Button) findViewById(R.id.dateButton);
-		final Button timeButton = (Button) findViewById(R.id.timeButton);
-		final Button createButton = (Button) findViewById(R.id.createButton);
-		final Spinner repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
-		final CheckBox notifyBox = (CheckBox) findViewById(R.id.notifyCheckBox);
-		name = name.replaceAll("PARSE", "/");
-		eventText.setText(name);
-		
-		if (notify){
-			notifyBox.setChecked(true);
-			previousNotifyValue = true;
-		} else {
-			notifyBox.setChecked(false);
-		}
-		
-		if (repeatRate != 0) repeatRateText.setText(""+repeatRate);
-		weekBox.setChecked(weekends);
-		sinceBox.setChecked(since);
-		try {
-			dateView.setText(toDateFormat.format(fromDateFormat.parse(day+"/"+(month+1)+"/"+year)));
-			timeView.setText(toTimeFormat.format(fromTimeFormat.parse(String.format("%02d",hour)+":"+String.format("%02d",minute))));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
-		if (sinceBox.isChecked()){
-			repeatSpinner.setEnabled(false);
-			showSpinnerMessages(false);
-		}
-		sinceBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				Date currentDate = null;
-				try {
-					currentDate = fromDateFormat.parse(c.get(Calendar.DATE)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.YEAR));
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-				if (isChecked || eventDate.before(currentDate)){
-					repeatSpinner.setEnabled(false);
-					repeatSpinner.setSelection(0); //also sets showSpinnerMessages(false)
-					if (!isChecked) daysSinceBox = false;
-				} else {
-					repeatSpinner.setEnabled(true);
-					daysSinceBox = false;
-				}
+		String fromTimeString = String.format("%02d",hour)+":"+String.format("%02d",minute);
+		String outputTimeString = fromTimeString;
+		Date eventTime = new Date();
+		if (!twentyFourHourClock){
+			try {
+				eventTime = fromTimeFormat.parse(outputTimeString);
+				outputTimeString = toTimeFormat.format(eventTime);
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
-		});
-		Date currentDate = null;
-		try {
-			currentDate = fromDateFormat.parse(c.get(Calendar.DATE)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.YEAR));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		if (eventDate.before(currentDate)){
-			notifyBox.setEnabled(false);
-			sinceBox.setChecked(true);
-			sinceBox.setEnabled(false);
-		} else {
-			notifyBox.setEnabled(true);
-			sinceBox.setEnabled(true);
 		}
 		
+		final CheckBox weekBox = (CheckBox) findViewById(R.id.weekBox);
+		final EditText repeatRateEditText = (EditText) findViewById(R.id.repeatRateEditText);
+		final Spinner repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
 		ArrayAdapter<CharSequence> repeatadapter = ArrayAdapter.createFromResource(this, R.array.spinnerArray, android.R.layout.simple_spinner_item);
 		repeatadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		repeatSpinner.setAdapter(repeatadapter);
@@ -202,33 +133,78 @@ public class EditEvent extends Activity {
 			public void onNothingSelected(AdapterView<?> parent) {
 			}
 		});
-		repeatSpinner.setSelection(repeat);
-		createButton.setText("Edit Event");
 		
+		timeView.setText(outputTimeString);
+		final TextView dateView = (TextView) findViewById(R.id.dateView);
+		String dateString = day+"/"+(month+1)+"/"+year;
+		String outputDateString = "";
+		try {
+			eventDate = fromDateFormat.parse(dateString);
+			outputDateString = toDateFormat.format(eventDate);
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+		dateView.setText(outputDateString);
+		
+		final CheckBox sinceBox = (CheckBox) findViewById(R.id.sinceBox);
+		daysSinceBox = prefs.getBoolean("daysSinceDefault", false);
+		if (daysSinceBox){
+			sinceBox.setChecked(true);
+			repeatSpinner.setEnabled(false);
+			showSpinnerMessages(false);
+		}
+		daysSinceBox = sinceBox.isChecked();
+		sinceBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				Date currentDate = null;
+				try {
+					currentDate = fromDateFormat.parse(c.get(Calendar.DATE)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.YEAR));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				if (isChecked || eventDate.before(currentDate)){
+					repeatSpinner.setEnabled(false);
+					repeatSpinner.setSelection(0); //also sets showSpinnerMessages(false)
+					if (!isChecked) daysSinceBox = true;
+				} else {
+					repeatSpinner.setEnabled(true);
+					daysSinceBox = false;
+				}
+			}
+		});
+		
+		final CheckBox notifyBox = (CheckBox) findViewById(R.id.notifyCheckBox);
+		
+		Button timeButton = (Button) findViewById(R.id.timeButton);
 		timeButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v){
 				showTimePickerDialog(v);
 			}
 		});
+		Button dateButton = (Button) findViewById(R.id.dateButton);
 		dateButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v){
 				showDatePickerDialog(v);
 			}
 		});
 		
+		Button createButton = (Button) findViewById(R.id.createButton);
 		createButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v){
+				int alarmID = Integer.parseInt(month+""+day+""+hour+""+minute);
 				if (eventText.getText().toString().matches("")){
-					Toast.makeText(EditEvent.this, "Missing event name", Toast.LENGTH_SHORT).show();
+					Toast.makeText(CreateEvent.this, "Missing event name", Toast.LENGTH_SHORT).show();
 				    return;
 				} else if (repeatSpinner.getSelectedItemPosition() != 0 &&
-						(repeatRateText.getText().toString().matches("") ||
-								Integer.parseInt(repeatRateText.getText().toString()) == 0)){
-					Toast.makeText(EditEvent.this, "Missing repeat rate", Toast.LENGTH_SHORT).show();
+						(repeatRateEditText.getText().toString().matches("") ||
+								Integer.parseInt(repeatRateEditText.getText().toString()) == 0)){
+					Toast.makeText(CreateEvent.this, "Missing repeat rate", Toast.LENGTH_SHORT).show();
 				    return;
 				} else {
 					String eventName = eventText.getText().toString().replaceAll("/", "PARSE"); //fix linux naming bug (canont contain "/")
-					if (repeatSpinner.getSelectedItemPosition() == 0) repeatRateText.setText("0");
+					if (repeatSpinner.getSelectedItemPosition() == 0) repeatRateEditText.setText("0");
 					JSONObject obj = new JSONObject();
 					try{
 						String filename = eventName;
@@ -241,11 +217,10 @@ public class EditEvent extends Activity {
 						obj.put("weekends", weekBox.isChecked());
 						obj.put("since", sinceBox.isChecked());
 						obj.put("repeat", repeatSpinner.getSelectedItemPosition());
-						obj.put("repeatRate", Integer.parseInt(repeatRateText.getText().toString()));
-						obj.put("notify", notifyBox.isChecked());
+						obj.put("repeatRate", Integer.parseInt(repeatRateEditText.getText().toString()));
+						obj.put("notify",notifyBox.isChecked());
 						obj.put("alarmid", alarmID);
 						String stringDate = obj.toString();
-						deleteFile(oldname);
 						FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
 						fos.write(stringDate.getBytes());
 						fos.close();
@@ -256,25 +231,15 @@ public class EditEvent extends Activity {
 					}
 					if (notifyBox.isChecked()){
 						Intent i = new Intent(contex, CardsService.class);
-						i.putExtra("com.sm.daysuntilcards.EVENTNAME", eventText.getText().toString());
-						i.putExtra("com.sm.daysuntilcards.ALARMID", alarmID);
+						i.putExtra("com.sm.daysuntilcardslite.EVENTNAME", eventText.getText().toString());
+						i.putExtra("com.sm.daysuntilcardslite.ALARMID", alarmID);
 				        Time now = new Time();
 				        now.set(0, minute, hour, day, month, year);
 				        
-				        AlarmManager mgr = (AlarmManager) contex.getSystemService(Context.ALARM_SERVICE);
+				        AlarmManager mgr = (AlarmManager) CreateEvent.this.getSystemService(Context.ALARM_SERVICE);
 				        PendingIntent pi = PendingIntent.getService(contex, alarmID, i, 0);
 				        mgr.set(AlarmManager.RTC, now.toMillis(false), pi);
 				        Log.d("service", now.toMillis(false)+" is event");
-					} else if (previousNotifyValue){
-						//delete any alarms by overwriting with blank intent
-						//TODO: doesn't work properly
-						Intent i = new Intent();
-				        Time now = new Time();
-				        now.set(0, minute, hour, day, month, year);
-				        
-				        AlarmManager mgr = (AlarmManager) contex.getSystemService(Context.ALARM_SERVICE);
-				        PendingIntent pi = PendingIntent.getService(contex, alarmID, i, 0);
-				        mgr.set(AlarmManager.RTC, now.toMillis(false), pi);
 					}
 					finish();
 				}

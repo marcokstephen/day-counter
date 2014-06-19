@@ -1,4 +1,4 @@
-package com.sm.daysuntilcards;
+package com.sm.daysuntilcardslite;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.sm.daysuntilcardslite.R;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

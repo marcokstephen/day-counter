@@ -1,4 +1,4 @@
-package com.sm.daysuntilcards;
+package com.sm.daysuntilcardslite;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -6,6 +6,8 @@ import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.sm.daysuntilcardslite.R;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -38,7 +40,7 @@ public class DialogActivity extends Activity {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		twentyFourHourClock = prefs.getBoolean("24hour",false);
 		Intent intent = getIntent();
-		final String eventString = intent.getStringExtra("com.sm.daysuntilcards.JSONSTRING");
+		final String eventString = intent.getStringExtra("com.sm.daysuntilcardslite.JSONSTRING");
 		
 		JSONObject jsonEvent = new JSONObject();
 		int minute=0,hour=0,day=0,month=0,year=0;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sm.daysuntilcards"
+    package="com.sm.daysuntilcardslite"
     android:versionCode="1"
     android:versionName="1.0" >
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -15,13 +15,13 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/lite_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.Example" >
         <meta-data android:name="com.google.android.gms.version"
            android:value="@integer/google_play_services_version" />
         <activity
-            android:name="com.sm.daysuntilcards.MainActivity"
+            android:name="com.sm.daysuntilcardslite.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -31,61 +31,61 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.sm.daysuntilcards.CreateEvent"
+            android:name="com.sm.daysuntilcardslite.CreateEvent"
             android:label="@string/title_activity_create_event"
-            android:parentActivityName="com.sm.daysuntilcards.MainActivity"
+            android:parentActivityName="com.sm.daysuntilcardslite.MainActivity"
             android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sm.daysuntilcards.MainActivity" />
+                android:value="com.sm.daysuntilcardslite.MainActivity" />
         </activity>
         <activity
-            android:name="com.sm.daysuntilcards.SettingsActivity"
+            android:name="com.sm.daysuntilcardslite.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName="com.sm.daysuntilcards.MainActivity" >
+            android:parentActivityName="com.sm.daysuntilcardslite.MainActivity" >
         </activity>
         <activity
-            android:name="com.sm.daysuntilcards.HelpMenu"
+            android:name="com.sm.daysuntilcardslite.HelpMenu"
             android:label="@string/title_activity_help_menu"
-            android:parentActivityName="com.sm.daysuntilcards.MainActivity" >
+            android:parentActivityName="com.sm.daysuntilcardslite.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sm.daysuntilcards.MainActivity" />
+                android:value="com.sm.daysuntilcardslite.MainActivity" />
         </activity>
         <activity
-            android:name="com.sm.daysuntilcards.EditEvent"
+            android:name="com.sm.daysuntilcardslite.EditEvent"
             android:label="@string/title_activity_edit_event"
-            android:parentActivityName="com.sm.daysuntilcards.MainActivity"
+            android:parentActivityName="com.sm.daysuntilcardslite.MainActivity"
             android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sm.daysuntilcards.MainActivity" />
+                android:value="com.sm.daysuntilcardslite.MainActivity" />
         </activity>
         <activity
-            android:name="com.sm.daysuntilcards.DialogActivity"
+            android:name="com.sm.daysuntilcardslite.DialogActivity"
             android:label="@string/title_activity_dialog"
-            android:parentActivityName="com.sm.daysuntilcards.MainActivity"
+            android:parentActivityName="com.sm.daysuntilcardslite.MainActivity"
             android:theme="@style/HoloDialog" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sm.daysuntilcards.MainActivity" />
+                android:value="com.sm.daysuntilcardslite.MainActivity" />
         </activity>
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
-			<service android:name=".CardsService" android:exported="false">
+			<service android:name="com.sm.daysuntilcardslite.CardsService" android:exported="false">
 			    <intent-filter>
-			        <action android:name="com.sm.daysuntilcards.CardsService" />
+			        <action android:name="com.sm.daysuntilcardslite.CardsService" />
 			    </intent-filter>
 			</service>
-			<service android:name=".BootService" android:exported="false">
+			<service android:name="com.sm.daysuntilcardslite.BootService" android:exported="false">
 	   			 <intent-filter>
-		    	    <action android:name="com.sm.daysuntilcards.BootService" />
+		    	    <action android:name="com.sm.daysuntilcardslite.BootService" />
 		   		 </intent-filter>
 			</service>
 			
 			<receiver
-			    android:name=".BootReceiver"
+			    android:name="com.sm.daysuntilcardslite.BootReceiver"
 			    android:enabled="true"
 			    android:exported="true"
 			    android:label="BootReceiver">
