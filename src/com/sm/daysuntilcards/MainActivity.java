@@ -17,6 +17,9 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -39,9 +42,11 @@ import android.support.v4.view.ViewPager;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -272,6 +277,16 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			});
 		}
 		
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+			super.onCreateView(inflater, container, savedInstanceState);
+			View view = inflater.inflate(R.layout.list_fragment_events, container, false);
+			AdView mAdView;
+	        mAdView = (AdView) view.findViewById(R.id.adView);
+	        mAdView.loadAd(new AdRequest.Builder().build());
+			return view;
+		}
+		
 	   @Override
 	    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 	        super.onCreateContextMenu(menu, v, menuInfo);
@@ -336,6 +351,16 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 					startActivity(intent);
 				}
 			});
+		}
+		
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+			super.onCreateView(inflater, container, savedInstanceState);
+			View view = inflater.inflate(R.layout.list_fragment_events, container, false);
+			AdView mAdView;
+	        mAdView = (AdView) view.findViewById(R.id.adView);
+	        mAdView.loadAd(new AdRequest.Builder().build());
+			return view;
 		}
 		
 		@Override
