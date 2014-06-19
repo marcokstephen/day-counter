@@ -150,6 +150,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         ads:adSize="BANNER"
-        ads:adUnitId="@string/ad_unit_id_days"/>
+        ads:adUnitId="@string/ad_unit_id_days_2"/>
 
 </RelativeLayout>
