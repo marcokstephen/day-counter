@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:padding="@dimen/widget_margin">
+
+	<RelativeLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" >
+	
+	    <ImageView
+	        android:id="@+id/imageView1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentTop="true"
+	        android:src="@drawable/widget_icon" />
+
+	    <TextView
+	        android:id="@+id/widgetEventTitle"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentTop="true"
+	        android:layout_marginTop="8dp"
+	        android:fontFamily="Roboto"
+	        android:gravity="center_horizontal"
+	        android:maxLines="1"
+	        android:paddingTop="1dp"
+	        android:text="Event Name"
+	        android:textColor="@color/white"
+	        android:textSize="11sp" />
+
+	    <TextView
+	        android:id="@+id/widgetDaysRemaining"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/widgetEventTitle"
+	        android:layout_marginTop="2dp"
+	        android:text="0"
+	        android:textStyle="bold"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textColor="@color/black"
+	        android:gravity="center_horizontal"
+	        android:textSize="30sp" />
+
+	    <TextView
+	        android:id="@+id/textView1"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/widgetDaysRemaining"
+	        android:gravity="center_horizontal"
+	        android:text="days"
+	        android:layout_marginTop="-7dp"
+	        android:textSize="10sp"
+	        android:textColor="@color/black" />
+	
+	</RelativeLayout>
+
+</FrameLayout>
