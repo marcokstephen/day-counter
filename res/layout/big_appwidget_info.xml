@@ -1,0 +1,10 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="40dp"
+    android:minHeight="40dp"
+    android:updatePeriodMillis="43200000"
+    android:previewImage="@drawable/widget_icon"
+    android:initialLayout="@layout/big_widget"
+    android:resizeMode="horizontal"
+    android:configure="com.sm.daysuntilcardslite.WidgetConfigure"
+    android:widgetCategory="home_screen" >
+</appwidget-provider>
