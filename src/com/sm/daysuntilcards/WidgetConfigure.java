@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ListActivity;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -88,7 +87,7 @@ public class WidgetConfigure extends ListActivity {
 		resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
 		
 		//writing the json string to shared preferences so it can be used onUpdate
-		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences sharedPref = getSharedPreferences("widgetData", Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = sharedPref.edit();
 		editor.putString(mAppWidgetId+"", jsonEvent.toString());
 		editor.commit();

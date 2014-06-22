@@ -7,7 +7,6 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 
 public class MyAppWidgetProvider extends AppWidgetProvider {
@@ -19,11 +18,14 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
 			int appWidgetId = appWidgetIds[i];
 			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.big_widget);
 			
-			SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-			String eventString = sharedPrefs.getString(appWidgetId+"", "");
+			SharedPreferences sharedPrefs = context.getSharedPreferences("widgetData", 0);
+			String eventString = sharedPrefs.getString(appWidgetId+"", "nothingfound");
 			JSONObject jsonEvent = new JSONObject();
+			String title = "";
 			try{
 				jsonEvent = new JSONObject(eventString);
+				title = jsonEvent.getString("name");
+				title = title.replaceAll("PARSE","/");
 			} catch (JSONException e){
 				e.printStackTrace();
 			}
@@ -34,6 +36,7 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
 				e.printStackTrace();
 			} 
 			views.setTextViewText(R.id.widgetDaysRemaining, daysRemaining);
+			views.setTextViewText(R.id.widgetEventTitle, title);
 			
 			appWidgetManager.updateAppWidget(appWidgetId, views);
 		}
