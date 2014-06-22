@@ -18,7 +18,7 @@
     <string name="cancel">Cancel</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
-    <string name="delete_all">Delete All</string>
+    <string name="delete_all">Delete all</string>
     <string name="help">Help</string>
     <string name="title_activity_help_menu">Help</string>
     <string name="title_activity_settings">Settings</string>
@@ -54,5 +54,8 @@
     <string name="calendar_icon_setting">Calendar icon theme</string>
     <string name="ad_unit_id_days">ca-app-pub-8818613542307211/8521784481</string>
     <string name="ad_unit_id_days_2">ca-app-pub-8818613542307211/4870314084</string>
+    <string name="import_from_cal">Import from calendar</string>
+    <string name="import_string">Import</string>
+    <string name="import_from_calendar_activity_name">Import from Calendar</string>
 
 </resources>

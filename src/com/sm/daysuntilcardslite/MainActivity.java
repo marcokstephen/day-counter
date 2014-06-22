@@ -201,6 +201,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		} else if (id == R.id.help){
 			Intent intent = new Intent(this, HelpMenu.class);
 			startActivity(intent);
+		} else if (id == R.id.import_from_cal) {
+			Intent intent = new Intent(this, ImportCal.class);
+			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
 	}

@@ -3,7 +3,7 @@
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingBottom="0dp"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -69,15 +69,6 @@
         android:layout_alignLeft="@+id/weekBox"
         android:layout_below="@+id/weekBox"
         android:text="@string/daysSinceBox" />
-
-    <Button
-        android:id="@+id/createButton"
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="68dp"
-        android:text="@string/create_event" />
 
     <Spinner
         android:id="@+id/repeatSpinner"
@@ -147,9 +138,32 @@
         android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/button_bar_create"
         android:layout_alignParentLeft="true"
         ads:adSize="BANNER"
         ads:adUnitId="@string/ad_unit_id_days_2"/>
+   	
+   	<LinearLayout style="?android:buttonBarStyle"
+        android:layout_width="match_parent"
+        android:id="@+id/button_bar_create"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+        
+        <Button style="?android:buttonBarButtonStyle"
+            android:id="@+id/cancelButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/createButton"
+            style="?android:buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/create_event" />
+        
+    </LinearLayout>
 
 </RelativeLayout>

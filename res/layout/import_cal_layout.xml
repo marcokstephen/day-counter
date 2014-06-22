@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+	<ListView
+	    android:id="@+id/import_listview"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_alignParentTop="true"
+	    android:layout_above="@+id/button_bar_import_linear_layout" />
+	
+    <LinearLayout style="?android:buttonBarStyle"
+        android:layout_width="match_parent"
+        android:id="@+id/button_bar_import_linear_layout"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+        
+        <Button style="?android:buttonBarButtonStyle"
+            android:id="@+id/cancel_import_button"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/import_button"
+            style="?android:buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/import_string" />
+        
+    </LinearLayout>
+</RelativeLayout>

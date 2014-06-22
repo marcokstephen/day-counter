@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sm.daysuntilcardslite"
-    android:versionCode="2"
-    android:versionName="1.5" >
+    android:versionCode="3"
+    android:versionName="1.7" >
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- Used to request banner and interstitial ads. -->
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- Used to avoid sending an ad request if there is no connectivity. -->
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-sdk
         android:minSdkVersion="14"
@@ -34,7 +32,8 @@
             android:name="com.sm.daysuntilcardslite.CreateEvent"
             android:label="@string/title_activity_create_event"
             android:parentActivityName="com.sm.daysuntilcardslite.MainActivity"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcardslite.MainActivity" />
@@ -42,12 +41,14 @@
         <activity
             android:name="com.sm.daysuntilcardslite.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName="com.sm.daysuntilcardslite.MainActivity" >
+            android:parentActivityName="com.sm.daysuntilcardslite.MainActivity"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.sm.daysuntilcardslite.HelpMenu"
             android:label="@string/title_activity_help_menu"
-            android:parentActivityName="com.sm.daysuntilcardslite.MainActivity" >
+            android:parentActivityName="com.sm.daysuntilcardslite.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcardslite.MainActivity" />
@@ -56,7 +57,8 @@
             android:name="com.sm.daysuntilcardslite.EditEvent"
             android:label="@string/title_activity_edit_event"
             android:parentActivityName="com.sm.daysuntilcardslite.MainActivity"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcardslite.MainActivity" />
@@ -66,6 +68,15 @@
             android:label="@string/title_activity_dialog"
             android:parentActivityName="com.sm.daysuntilcardslite.MainActivity"
             android:theme="@style/HoloDialog" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sm.daysuntilcardslite.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.sm.daysuntilcardslite.ImportCal"
+            android:label="@string/import_from_calendar_activity_name"
+            android:parentActivityName="com.sm.daysuntilcardslite.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcardslite.MainActivity" />
