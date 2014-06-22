@@ -256,14 +256,17 @@ public final class R {
         public static final int widget_icon=0x7f0200cc;
     }
     public static final class id {
-        public static final int action_settings=0x7f0b0024;
+        public static final int action_settings=0x7f0b0029;
+        public static final int button_bar_import_linear_layout=0x7f0b0025;
         public static final int calDayView=0x7f0b0013;
         public static final int calMonthView=0x7f0b0012;
         public static final int calendarFrameView=0x7f0b0014;
-        public static final int clear_all=0x7f0b0026;
+        public static final int calendar_event_checkbox=0x7f0b0028;
+        public static final int cancel_import_button=0x7f0b0026;
+        public static final int clear_all=0x7f0b002c;
         public static final int container=0x7f0b0000;
         public static final int createButton=0x7f0b001d;
-        public static final int create_date=0x7f0b0025;
+        public static final int create_date=0x7f0b002a;
         public static final int dateButton=0x7f0b0018;
         public static final int dateView=0x7f0b001a;
         public static final int daysView=0x7f0b0010;
@@ -277,9 +280,12 @@ public final class R {
         public static final int eventNameView=0x7f0b000f;
         public static final int eventText=0x7f0b0016;
         public static final int excludesWeekendsDialogView=0x7f0b0008;
-        public static final int help=0x7f0b0027;
+        public static final int help=0x7f0b002d;
         public static final int helpTextView=0x7f0b0009;
         public static final int imageView1=0x7f0b000b;
+        public static final int import_button=0x7f0b0027;
+        public static final int import_from_cal=0x7f0b002b;
+        public static final int import_listview=0x7f0b0024;
         public static final int notificationIconView=0x7f0b0015;
         public static final int notifyCheckBox=0x7f0b0023;
         public static final int pager=0x7f0b000a;
@@ -307,6 +313,7 @@ public final class R {
         public static final int card_front=0x7f030006;
         public static final int configure_widget=0x7f030007;
         public static final int fragment_create_event=0x7f030008;
+        public static final int import_cal_layout=0x7f030009;
     }
     public static final class menu {
         public static final int create_event=0x7f0a0000;
@@ -338,6 +345,8 @@ public final class R {
         public static final int excludes_weekends=0x7f080022;
         public static final int hello_world=0x7f08001d;
         public static final int help=0x7f080012;
+        public static final int import_from_calendar=0x7f08002b;
+        public static final int import_from_calendar_activity_name=0x7f08002a;
         public static final int no=0x7f08000d;
         public static final int notice_weekends_setting=0x7f080020;
         public static final int notice_weekends_summary=0x7f080021;
@@ -462,6 +471,7 @@ public final class R {
     }
     public static final class xml {
         public static final int big_appwidget_info=0x7f040000;
-        public static final int prefs=0x7f040001;
+        public static final int import_list_item_layout=0x7f040001;
+        public static final int prefs=0x7f040002;
     }
 }

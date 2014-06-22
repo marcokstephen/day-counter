@@ -4,6 +4,7 @@
     android:versionCode="2"
     android:versionName="1.5" >
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
@@ -57,6 +58,14 @@
             android:label="@string/title_activity_dialog"
             android:parentActivityName="com.sm.daysuntilcards.MainActivity"
             android:theme="@style/HoloDialog" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sm.daysuntilcards.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.sm.daysuntilcards.ImportCal"
+            android:label="@string/import_from_calendar_activity_name"
+            android:parentActivityName="com.sm.daysuntilcards.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcards.MainActivity" />
