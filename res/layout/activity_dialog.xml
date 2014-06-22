@@ -13,6 +13,7 @@
         android:text="@string/temp"
         android:fontFamily="Roboto"
         android:textSize="30sp"
+        android:maxLines="3"
         android:textStyle="bold" />
 
     <TextView
