@@ -211,6 +211,14 @@ public class EditEvent extends Activity {
 			}
 		});
 		
+		Button cancelButton = (Button) findViewById(R.id.cancelButton);
+		cancelButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
+		
 		createButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v){
 				if (eventText.getText().toString().matches("")){

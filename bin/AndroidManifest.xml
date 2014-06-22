@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sm.daysuntilcards"
-    android:versionCode="2"
-    android:versionName="1.5" >
+    android:versionCode="3"
+    android:versionName="1.7" >
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 	<uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-sdk
@@ -27,7 +27,8 @@
         <activity
             android:name="com.sm.daysuntilcards.CreateEvent"
             android:label="@string/title_activity_create_event"
-            android:parentActivityName="com.sm.daysuntilcards.MainActivity" >
+            android:parentActivityName="com.sm.daysuntilcards.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcards.MainActivity" />
@@ -35,12 +36,14 @@
         <activity
             android:name="com.sm.daysuntilcards.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName="com.sm.daysuntilcards.MainActivity" >
+            android:parentActivityName="com.sm.daysuntilcards.MainActivity"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.sm.daysuntilcards.HelpMenu"
             android:label="@string/title_activity_help_menu"
-            android:parentActivityName="com.sm.daysuntilcards.MainActivity" >
+            android:parentActivityName="com.sm.daysuntilcards.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcards.MainActivity" />
@@ -48,7 +51,8 @@
         <activity
             android:name="com.sm.daysuntilcards.EditEvent"
             android:label="@string/title_activity_edit_event"
-            android:parentActivityName="com.sm.daysuntilcards.MainActivity" >
+            android:parentActivityName="com.sm.daysuntilcards.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcards.MainActivity" />
@@ -65,7 +69,8 @@
         <activity
             android:name="com.sm.daysuntilcards.ImportCal"
             android:label="@string/import_from_calendar_activity_name"
-            android:parentActivityName="com.sm.daysuntilcards.MainActivity" >
+            android:parentActivityName="com.sm.daysuntilcards.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sm.daysuntilcards.MainActivity" />
