@@ -26,15 +26,11 @@ class ImportListAdapter extends BaseAdapter {
 	private LayoutInflater myInflater;
 	private List<Boolean> checkedStatus;
 	
-	public ImportListAdapter(Context c, List<CalEvent> calendarList, List<Boolean> cs){
-		this.checkedStatus = cs;
-		calEventList = calendarList;
+	public ImportListAdapter(Context c){
+		calEventList = ImportCal.calendarList;
 		myInflater = (LayoutInflater)c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		int size = calendarList.size();
-		checkedStatus = new ArrayList<Boolean>();
-		for (int i = 0; i < size; i++){
-			checkedStatus.add(false);
-		}
+		int size = calEventList.size();
+		checkedStatus = ImportCal.checkedStatus;
 	}
 	
 	@Override
@@ -78,10 +74,10 @@ class ImportListAdapter extends BaseAdapter {
 		SimpleDateFormat fromDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		SimpleDateFormat toDateFormat = new SimpleDateFormat("MMM d, yyyy  -  h:mm a");
 		//SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ImportCal.this);
-		boolean twentyFourHourClock = false; //prefs.getBoolean("24hour", false);
-		if (twentyFourHourClock){
+		//boolean twentyFourHourClock = prefs.getBoolean("24hour", false);
+		//if (twentyFourHourClock){
 			toDateFormat = new SimpleDateFormat("MMM d, yyyy - HH:mm");
-		}
+		//}
 		
 		Time time = new Time();
 		time.set(event.getDate());

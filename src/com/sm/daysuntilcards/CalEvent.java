@@ -1,6 +1,6 @@
 package com.sm.daysuntilcards;
 
-class CalEvent{
+public class CalEvent{
 	private long date;
 	private String name;
 	public String getName() {
