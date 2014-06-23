@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
@@ -16,6 +15,9 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -34,6 +36,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -41,30 +44,70 @@ import android.widget.TextView;
 @SuppressLint("SimpleDateFormat")
 public class ImportCal extends Activity {
 	private List<Boolean> checkedStatus;
-	private List<CalEvent> calendarList;
+	private static List<CalEvent> calendarList;
+	static int toDay=0,toMonth=0,toYear=0;
+	static int fromDay=0,fromMonth=0,fromYear=0;
+	static Time fromTime;
+	static Time toTime;
+	public static ImportListAdapter ila;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		setTheme(MainActivity.APP_THEME);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.import_cal_layout);
-		ListView importList = (ListView) findViewById(R.id.import_listview);
-		calendarList = getCalendarEvents();
-		Collections.sort(calendarList, new Comparator<CalEvent>(){
-			public int compare(CalEvent event1, CalEvent event2){
-				long event1ms = event1.getDate();
-				long event2ms = event2.getDate();
-				
-				if (event1ms < event2ms) return -1;
-				return 1;
-			}
-		});
+		
+		Calendar c = Calendar.getInstance();
+		toDay = c.get(Calendar.DATE);
+		toMonth = (c.get(Calendar.MONTH)+1);
+		toYear = c.get(Calendar.YEAR);
+		fromDay = c.get(Calendar.DATE);
+		fromMonth = (c.get(Calendar.MONTH)-1);
+		fromYear = c.get(Calendar.YEAR);
+		final ListView importList = (ListView) findViewById(R.id.import_listview);
+		fromTime = new Time();
+		fromTime.set(fromDay, fromMonth, fromYear);
+		toTime = new Time();
+		toTime.set(toDay,toMonth,toYear);
+		calendarList = getCalendarEvents(fromTime.toMillis(false),toTime.toMillis(false));
+		sortCalendarList(calendarList);
 
-		final ImportListAdapter ila = new ImportListAdapter(this);
+		ila = new ImportListAdapter(this);
 		importList.setAdapter(ila);
 		
 		Button cancelButton = (Button) findViewById(R.id.cancel_import_button);
 		Button acceptButton = (Button) findViewById(R.id.import_button);
+		final TextView fromDateView = (TextView) findViewById(R.id.fromDateView);
+		final TextView toDateView = (TextView) findViewById(R.id.toDateView);
+		fromDateView.setText(dateToString(fromDay,fromMonth,fromYear));
+		toDateView.setText(dateToString(toDay,toMonth,toYear));
+		
+		toDateView.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				showToDatePickerDialog(v);
+				Time ttime = new Time();
+				ttime.set(toDay,toMonth,toYear);
+				toTime = ttime;
+				calendarList = getCalendarEvents(fromTime.toMillis(false),ttime.toMillis(false));
+				sortCalendarList(calendarList);
+				ImportListAdapter newila = new ImportListAdapter(ImportCal.this);
+				importList.setAdapter(newila);
+			}
+		});
+		fromDateView.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				showFromDatePickerDialog(v);
+				Time ftime = new Time();
+				ftime.set(fromDay,fromMonth,fromYear);
+				fromTime = ftime;
+				calendarList = getCalendarEvents(ftime.toMillis(false),toTime.toMillis(false));
+				sortCalendarList(calendarList);
+				ImportListAdapter newila = new ImportListAdapter(ImportCal.this);
+				importList.setAdapter(newila);
+			}
+		});
 		
 		acceptButton.setOnClickListener(new OnClickListener(){
 			@Override
@@ -85,6 +128,10 @@ public class ImportCal extends Activity {
 				finish();
 			}
 		});
+	}
+	
+	private void updateTo(){
+		
 	}
 	
 	private void addCheckedEvents() throws JSONException, IOException{
@@ -126,16 +173,13 @@ public class ImportCal extends Activity {
 	}
 	
 	@SuppressWarnings("static-access")
-	private List<CalEvent> getCalendarEvents(){
+	private List<CalEvent> getCalendarEvents(long startTime, long endTime){
 		List<CalEvent> callist = new ArrayList<CalEvent>();
 		String[] projection = new String[] { "calendar_id","title","dtstart" };
 		ContentResolver cr = getContentResolver();
 		Uri uri = Calendars.CONTENT_URI;
 
-		Calendar c_start = Calendar.getInstance();
-		Calendar c_end = Calendar.getInstance();
-		c_end.add(Calendar.MONTH, 1); //shows list for events for next 5 years
-		String selection = "((dtstart >= "+c_start.getTimeInMillis()+") AND (dtend <= "+c_end.getTimeInMillis()+"))";
+		String selection = "((dtstart >= "+startTime+") AND (dtend <= "+endTime+"))";
 		
 		Cursor cursor = cr.query(uri.parse("content://com.android.calendar/events/"),projection,selection,null,null);
 		
@@ -145,7 +189,7 @@ public class ImportCal extends Activity {
 			CalEvent event = new CalEvent(date, title);
 			callist.add(event);
 		}
-		
+		Log.d("LIST","Size: "+callist.size());
 		return callist;
 	}
 	
@@ -251,5 +295,70 @@ public class ImportCal extends Activity {
 	static class ViewHolder{
 		CheckBox event;
 		TextView date;
+	}
+	
+	public void showFromDatePickerDialog(View v) {
+	    DialogFragment newFragment = new FromDatePickerFragment();
+	    newFragment.show(getFragmentManager(), "datePicker");
+	}
+	public static class FromDatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			return new DatePickerDialog(getActivity(), this, fromYear, fromMonth, fromDay);
+		}
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) {
+			fromDay = dayOfMonth;
+			fromMonth = monthOfYear;
+			fromYear = year;
+			TextView fromDateView = (TextView) getActivity().findViewById(R.id.fromDateView);
+			fromDateView.setText(dateToString(fromDay,fromMonth,fromYear));
+		}
+	}
+	
+	public void showToDatePickerDialog(View v) {
+	    DialogFragment newFragment = new ToDatePickerFragment();
+	    newFragment.show(getFragmentManager(), "datePicker");
+	}
+	public static class ToDatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			return new DatePickerDialog(getActivity(), this, toYear, toMonth, toDay);
+		}
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) {
+			toDay = dayOfMonth;
+			toMonth = monthOfYear;
+			toYear = year;
+			TextView toDateView = (TextView) getActivity().findViewById(R.id.toDateView);
+			toDateView.setText(dateToString(toDay,toMonth,toYear));
+		}
+	}
+	
+	private static String dateToString(int day, int month, int year){
+		SimpleDateFormat fromDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat toDateFormat = new SimpleDateFormat("MMM d, yyyy");
+		String fromDate = day+"/"+(month+1)+"/"+year;
+		String toDate = "";
+		try {
+			toDate = toDateFormat.format(fromDateFormat.parse(fromDate));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return toDate;
+	}
+	
+	private void sortCalendarList(List<CalEvent> cl){
+		Collections.sort(cl, new Comparator<CalEvent>(){
+			public int compare(CalEvent event1, CalEvent event2){
+				long event1ms = event1.getDate();
+				long event2ms = event2.getDate();
+				
+				if (event1ms < event2ms) return -1;
+				return 1;
+			}
+		});
 	}
 }
