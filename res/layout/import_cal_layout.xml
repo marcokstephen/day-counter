@@ -3,14 +3,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
+    <LinearLayout style="?android:buttonBarStyle"
+        android:layout_width="match_parent"
+        android:id="@+id/chooseDateLayout"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+        
+        <TextView
+            android:id="@+id/fromDateView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@android:style/Widget.DeviceDefault.Light.Spinner"
+            android:layout_weight="1"
+            android:text="Jan 1, 1990" />
+        <TextView
+            android:id="@+id/toDateView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@android:style/Widget.DeviceDefault.Light.Spinner"
+            android:layout_weight="1"
+            android:text="Jan 1, 1991" />
+        
+    </LinearLayout>
+    
 	<ListView
 	    android:id="@+id/import_listview"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_alignParentLeft="true"
-	    android:layout_alignParentTop="true"
+	    android:layout_below="@+id/chooseDateLayout"
 	    android:layout_above="@+id/button_bar_import_linear_layout" />
-	
+
     <LinearLayout style="?android:buttonBarStyle"
         android:layout_width="match_parent"
         android:id="@+id/button_bar_import_linear_layout"
@@ -30,7 +53,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/import_string" />
+            android:text="Import" />
         
     </LinearLayout>
 </RelativeLayout>
