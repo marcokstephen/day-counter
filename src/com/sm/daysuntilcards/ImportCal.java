@@ -2,15 +2,19 @@ package com.sm.daysuntilcards;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -32,13 +36,16 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
+import android.widget.TextView;
 
+@SuppressLint("SimpleDateFormat")
 public class ImportCal extends Activity {
 	private List<Boolean> checkedStatus;
 	private List<CalEvent> calendarList;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
+		setTheme(MainActivity.APP_THEME);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.import_cal_layout);
 		ListView importList = (ListView) findViewById(R.id.import_listview);
@@ -118,6 +125,7 @@ public class ImportCal extends Activity {
 		}
 	}
 	
+	@SuppressWarnings("static-access")
 	private List<CalEvent> getCalendarEvents(){
 		List<CalEvent> callist = new ArrayList<CalEvent>();
 		String[] projection = new String[] { "calendar_id","title","dtstart" };
@@ -145,11 +153,9 @@ public class ImportCal extends Activity {
 		
 		private List<CalEvent> calEventList;
 		private LayoutInflater myInflater;
-		private Context context;
 		
 		public ImportListAdapter(Context c){
 			calEventList = calendarList;
-			context = c;
 			myInflater = (LayoutInflater)c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			int size = calendarList.size();
 			checkedStatus = new ArrayList<Boolean>();
@@ -175,11 +181,13 @@ public class ImportCal extends Activity {
 
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
+			
 			final CalEvent event = calEventList.get(position);
 			ViewHolder holder = null;
-			convertView = myInflater.inflate(R.xml.import_list_item_layout, null);
+			convertView = myInflater.inflate(R.layout.import_list_item_layout, null);
 			holder = new ViewHolder();
 			holder.event = (CheckBox) convertView.findViewById(R.id.calendar_event_checkbox);
+			holder.date = (TextView) convertView.findViewById(R.id.calendar_event_dateView);
 			convertView.setTag(holder);
 				
 			holder.event.setOnCheckedChangeListener(new OnCheckedChangeListener(){
@@ -188,13 +196,36 @@ public class ImportCal extends Activity {
 						boolean isChecked) {
 					if (isChecked){
 						checkedStatus.set(position, true);
-						Log.d("CALENDAR",event.getDate()+"");
 					} else {
 						checkedStatus.set(position, false);
 					}
 				}
 			});
 			
+			SimpleDateFormat fromDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			SimpleDateFormat toDateFormat = new SimpleDateFormat("MMM d, yyyy  -  h:mm a");
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ImportCal.this);
+			boolean twentyFourHourClock = prefs.getBoolean("24hour", false);
+			if (twentyFourHourClock){
+				toDateFormat = new SimpleDateFormat("MMM d, yyyy - HH:mm");
+			}
+			
+			Time time = new Time();
+			time.set(event.getDate());
+			int day = time.monthDay;
+			int month = time.month;
+			int year = time.year;
+			int hour = time.hour;
+			int minute = time.minute;
+			String fromDate = day+"/"+(month+1)+"/"+year+" "+hour+":"+minute;
+			String outputTimeString = "";
+			try {
+				outputTimeString = toDateFormat.format(fromDateFormat.parse(fromDate));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+			holder.date.setText(outputTimeString);
 			holder.event.setChecked(checkedStatus.get(position));
 			holder.event.setText(event.getName());
 			return convertView;
@@ -219,5 +250,6 @@ public class ImportCal extends Activity {
 	
 	static class ViewHolder{
 		CheckBox event;
+		TextView date;
 	}
 }
